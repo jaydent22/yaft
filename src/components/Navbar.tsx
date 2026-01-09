@@ -1,11 +1,16 @@
+"use client";
+
 import Link from "next/link";
+import { useState } from "react";
 
 const Navbar = () => {
-  return (
+  const [isOpen, setIsOpen] = useState(false);
 
+  const toggleMenu = () => setIsOpen(!isOpen);
+
+  return (
     <nav className="bg-white shadow-md dark:bg-gray-800 p-4">
       <div className="flex items-center justify-between max-w-7xl mx-auto">
-
         {/* Left side: logo + links */}
         <div className="flex items-center space-x-8">
           <div className="font-bold text-xl text-emerald-600 dark:text-emerald-500">
@@ -45,8 +50,53 @@ const Navbar = () => {
           >
             Sign Up
           </Link>
+
+          {/* Mobile menu button */}
+          <div className="md:hidden">
+            <button
+              className="text-gray-700 dark:text-gray-300 focus:outline-none"
+              onClick={toggleMenu}
+            >
+              <svg
+                className="h-6 w-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
+
+      {/* Mobile menu */}
+      {isOpen && (
+        <div className="md:hidden mt-4 space-y-2">
+          <Link href="/" className="block nav-link">
+            Home
+          </Link>
+          <Link href="/dashboard" className="block nav-link">
+            Dashboard
+          </Link>
+
+          <Link href="/programs" className="block nav-link">
+            Programs
+          </Link>
+          <Link href="/workouts" className="block nav-link">
+            Workouts
+          </Link>
+          <Link href="/progress" className="block nav-link">
+            Progress
+          </Link>
+        </div>
+      )}
     </nav>
   );
 };
