@@ -78,8 +78,11 @@ const Navbar = () => {
       </div>
 
       {/* Mobile menu */}
-      {isOpen && (
-        <div className="md:hidden mt-4 space-y-2">
+      <div
+        className={`md:hidden overflow-hidden transition-all duration-300 ease-out
+        ${isOpen ? "max-h-96 opacity-100 mt-4 translate-y-0" : "max-h-0 opacity-0 -translate-y-2"}`}
+      >
+        <div className="space-y-2">
           <Link href="/" className="block nav-link">
             Home
           </Link>
@@ -97,7 +100,7 @@ const Navbar = () => {
             Progress
           </Link>
         </div>
-      )}
+      </div>
     </nav>
   );
 };
