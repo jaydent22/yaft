@@ -39,13 +39,13 @@ const Navbar = () => {
         {/* Right side: auth buttons */}
         <div className="flex items-center space-x-4">
           <Link
-            href="/login"
+            href="/auth/login"
             className="text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-500"
           >
             Login
           </Link>
           <Link
-            href="/signup"
+            href="/auth/signup"
             className="bg-emerald-600 text-white px-4 py-2 rounded hover:bg-emerald-700"
           >
             Sign Up
@@ -55,6 +55,7 @@ const Navbar = () => {
           <div className="md:hidden">
             <button
               className="text-gray-700 dark:text-gray-300 focus:outline-none"
+              data-popover-target="mobile-menu"
               onClick={toggleMenu}
             >
               <svg
