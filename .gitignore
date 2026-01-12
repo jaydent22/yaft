@@ -41,3 +41,4 @@ yarn-error.log*
 next-env.d.ts
 
 getting-started.md
+src/app/page_dev.tsx
