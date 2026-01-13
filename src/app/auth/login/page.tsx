@@ -59,7 +59,7 @@ export default function Login() {
             <Link
               href="/auth/signup"
               className="text-emerald-600 hover:underline justify-self-end text-right">
-                Don't have an account?
+                Don&apos;t have an account?
               </Link>
           </div>
         </form>
