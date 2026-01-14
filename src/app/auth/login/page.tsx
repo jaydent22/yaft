@@ -1,4 +1,5 @@
 import Link from "next/link";
+import FloatingInput from "../../../components/FloatingInput";
 
 export default function Login() {
   return (
@@ -8,48 +9,29 @@ export default function Login() {
           Welcome back!
         </h1>
 
-        <form className="space-y-6" action="" method="POST">
-          <div className="relative">
-            <input
-              id="signin-email"
-              name="email"
-              type="email"
-              className="peer h-12 w-full border-b-2 border-border text-foreground placeholder-transparent focus:outline-none focus:border-accent"
-              placeholder=" "
-            />
-            <label
-              htmlFor="signin-email"
-              className="pointer-events-none absolute left-0 -top-3.5 text-foreground-muted text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-foregroud-muted peer-placeholder-shown:top-2 peer-focus:-top-3.5 peer-focus:text-foreground peer-focus:text-sm
-              peer-not-placeholder-shown:-top-3.5 peer-not-placeholder-shown:text-foreground-muted peer-not-placeholder-shown:text-sm"
-            >
-              Email address
-            </label>
-          </div>
-          <div className="mt-12 relative">
-            <input
-              id="signin-password"
-              name="password"
-              type="password"
-              className="peer h-12 w-full border-b-2 border-border text-foreground placeholder-transparent focus:outline-none focus:border-accent"
-              placeholder=" "
-            />
-            <label
-              htmlFor="signin-password"
-              className="pointer-events-none absolute left-0 -top-3.5 text-foreground-muted text-sm transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-foreground-muted peer-placeholder-shown:top-2 peer-focus:-top-3.5 peer-focus:text-foreground peer-focus:text-sm
-              peer-not-placeholder-shown:-top-3.5 peer-not-placeholder-shown:text-foreground-muted peer-not-placeholder-shown:text-sm"
-            >
-              Password
-            </label>
-          </div>
-          <div className="mt-12 relative flex items-center">
-            <button
-              type="submit"
-              className="w-full bg-accent text-white py-3 rounded-md hover:bg-accent-hover focus:outline-none active:bg-accent-active"
-            >
-              Sign In
-            </button>
-          </div>
-          <div className="mt-6 relative grid grid-cols-2 text-sm">
+        <form className="space-y-6 md:space-y-12" action="" method="POST">
+          <FloatingInput
+            id="login-email"
+            name="email"
+            type="email"
+            label="Email address"
+          />
+
+          <FloatingInput
+            id="login-password"
+            name="password"
+            type="password"
+            label="Password"
+          />
+
+          <button
+            type="submit"
+            className="w-full bg-accent text-white py-3 rounded-md hover:bg-accent-hover focus:outline-none active:bg-accent-active"
+          >
+            Sign In
+          </button>
+
+          <div className="grid grid-cols-2 text-sm">
             <Link
               href="/auth/change-password"
               className="text-accent hover:underline justify-self-start"
