@@ -35,7 +35,10 @@ const AnchoredMenu = ({
           e.stopPropagation();
           setIsOpen((prev) => !prev);
         }}
-        className={`flex items-center justify-center focus:outline-none text-gray-700 dark:text-gray-300 focus:outline-none ${isOpen ? "bg-gray-200 dark:bg-gray-700 rounded-md" : "hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md"} p-2`}
+        className={`flex items-center justify-center rounded-md p-2
+            focus:outline-none text-foreground focus:outline-none 
+            ${isOpen ? "bg-surface-active" : "hover:bg-surface-hover"}
+        `}
         aria-expanded={isOpen}
       >
         {button}
@@ -43,7 +46,7 @@ const AnchoredMenu = ({
 
       {isOpen && (
         <div
-          className={`absolute top-full mt-2 min-w-max rounded-lg border bg-white shadow-lg z-50 dark:bg-gray-800 dark:border-gray-700 ${
+          className={`absolute top-full mt-2 min-w-max rounded-lg border-border bg-surface shadow-lg z-50 ${
             align === "right" ? "right-0" : "left-0"
           }`}
         >

@@ -26,7 +26,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`bg-gray-50 min-h-screen flex flex-col ${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`bg-background min-h-screen flex flex-col ${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Navbar />
         <main className="flex-grow container mx-auto px-4 py-6">

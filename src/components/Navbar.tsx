@@ -1,14 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
 import AnchoredMenu from "./AnchoredMenu";
 
 const Navbar = () => {
-  const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <nav className="bg-white shadow-md dark:bg-gray-800 p-2 md:p-4 sticky top-0 z-50">
+    <nav className="bg-surface shadow-md border-none dark:border-b-1 p-2 md:p-4 sticky top-0 z-50">
       <div className="flex items-center md:justify-between">
         {/*Left: burger mobile, logo + nav links desktop */}
         <div className="flex items-center w-1/3 md:w-auto">
@@ -42,25 +40,12 @@ const Navbar = () => {
                     <Link
                       key={item.href}
                       href={item.href}
-                      className="dropdown-item"
+                      className="dropdown-item active:bg-surface-active"
                       onClick={closeMenu}
                     >
                       {item.label}
                     </Link>
                   ))}
-                  {/* <Link href="/dashboard" className="dropdown-item">
-                  Dashboard
-                </Link>
-
-                <Link href="/programs" className="dropdown-item">
-                  Programs
-                </Link>
-                <Link href="/workouts" className="dropdown-item">
-                  Workouts
-                </Link>
-                <Link href="/progress" className="dropdown-item">
-                  Progress
-                </Link> */}
                 </div>
               )}
             </AnchoredMenu>
@@ -70,7 +55,7 @@ const Navbar = () => {
           <div className="hidden md:flex items-center space-x-8">
             <Link
               href="/"
-              className="nav-link absolute left-1/2 transform -translate-x-1/2 md:static md:translate-x-0 font-bold text-xl text-emerald-600 dark:text-emerald-500"
+              className="nav-link absolute left-1/2 transform -translate-x-1/2 md:static md:translate-x-0 font-bold text-xl text-accent"
             >
               JAKT
             </Link>
@@ -79,16 +64,16 @@ const Navbar = () => {
               {/* <Link href="/" className="nav-link">
               Home
             </Link> */}
-              <Link href="/dashboard" className="nav-link">
+              <Link href="/dashboard" className="nav-link text-foreground hover:text-accent">
                 Dashboard
               </Link>
-              <Link href="/programs" className="nav-link">
+              <Link href="/programs" className="nav-link text-foreground hover:text-accent">
                 Programs
               </Link>
-              <Link href="/workouts" className="nav-link">
+              <Link href="/workouts" className="nav-link text-foreground hover:text-accent">
                 Workouts
               </Link>
-              <Link href="/progress" className="nav-link">
+              <Link href="/progress" className="nav-link text-foreground hover:text-accent">
                 Progress
               </Link>
             </div>
@@ -99,7 +84,7 @@ const Navbar = () => {
         <div className="flex justify-center w-1/3 md:hidden">
           <Link
             href="/"
-            className="font-bold text-xl text-emerald-600 dark:text-emerald-500"
+            className="font-bold text-xl text-accent"
           >
             JAKT
           </Link>
@@ -111,13 +96,13 @@ const Navbar = () => {
           <div className="hidden md:flex items-center space-x-4">
             <Link
               href="/auth/login"
-              className="text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-500"
+              className="text-foreground hover:text-accent"
             >
               Login
             </Link>
             <Link
               href="/auth/signup"
-              className="bg-emerald-600 text-white px-4 py-2 rounded hover:bg-emerald-700"
+              className="bg-accent text-white px-4 py-2 rounded hover:bg-accent-hover active:bg-accent-active"
             >
               Sign Up
             </Link>
@@ -162,50 +147,12 @@ const Navbar = () => {
                       {item.label}
                     </Link>
                   ))}
-                  {/* <Link href="/auth/login" className="dropdown-item">
-                    Login
-                  </Link>
-                  <Link href="/auth/signup" className="dropdown-item">
-                    Sign Up
-                  </Link> */}
                 </div>
               )}
             </AnchoredMenu>
           </div>
         </div>
       </div>
-
-      {/* Mobile menu */}
-      {/* <div
-        className={`md:hidden absolute top-full left-0 bg-white rounded-b-md shadow-md dark:bg-gray-800 overflow-hidden transition-all duration-300 ease-out
-        ${
-          isOpen
-            ? "max-h-96 opacity-100 translate-y-0"
-            : "max-h-0 opacity-0 -translate-y-2"
-        }`}
-      >
-        <div className="space-y-2 px-6 pb-6">
-          <Link href="/dashboard" className="block nav-link">
-            Dashboard
-          </Link>
-
-          <Link href="/programs" className="block nav-link">
-            Programs
-          </Link>
-          <Link href="/workouts" className="block nav-link">
-            Workouts
-          </Link>
-          <Link href="/progress" className="block nav-link">
-            Progress
-          </Link>
-          <Link href="/auth/login" className="block nav-link">
-            Login
-          </Link>
-          <Link href="/auth/signup" className="block nav-link">
-            Sign Up
-          </Link>
-        </div>
-      </div> */}
     </nav>
   );
 };
