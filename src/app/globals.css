@@ -9,6 +9,7 @@
   --surface: rgb(249 250 251);
   /* Inputs, secondary color */
   --surface-active: rgb(229 231 235);
+  /* Hover states */
   --surface-hover: rgb(243 244 246);
 
   /* Borders, dividers */
