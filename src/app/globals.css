@@ -26,24 +26,22 @@
   --accent-active: rgb(0 96 69);
 }
 
-/* @media (prefers-color-scheme: dark) {
-  :root {
-    --background: rgb(15 15 15);
-    --background-muted: rgb(24 24 27);
+.dark {
+  --background: rgb(15 15 15);
+  --background-muted: rgb(24 24 27);
 
-    --surface: rgb(24 24 27);
-    --surface-active: rgb(54 65 83);
-    --surface-hover: rgb(30 41 57);
+  --surface: rgb(15 15 15);
+  --surface-active: rgb(54 65 83);
+  --surface-hover: rgb(30 41 57);
 
-    --border: rgb(54 65 83);
-    
-    --foreground: rgb(209 213 220);
-    --foreground-muted: rgb(156 163 175);
+  --border: rgb(54 65 83);
 
-    --accent-hover: rgb(0 188 125);
-    --accent-active: rgb(0 212 146);
-  }
-} */
+  --foreground: rgb(209 213 220);
+  --foreground-muted: rgb(156 163 175);
+
+  --accent-hover: rgb(0 188 125);
+  --accent-active: rgb(0 212 146);
+}
 
 @theme inline {
   --color-background: var(--background);
@@ -57,7 +55,7 @@
 
   --color-foreground: var(--foreground);
   --color-foreground-muted: var(--foreground-muted);
-  
+
   --color-accent: var(--accent);
   --color-accent-hover: var(--accent-hover);
   --color-accent-active: var(--accent-active);
