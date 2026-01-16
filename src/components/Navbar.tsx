@@ -4,15 +4,17 @@ import Link from "next/link";
 import AnchoredMenu from "./AnchoredMenu";
 import ThemeToggle from "./ThemeToggle";
 import { usePathname } from "next/navigation";
+import { isError } from "util";
 
 const Navbar = () => {
   const pathname = usePathname();
   const isAuthRoute = pathname.startsWith("/auth");
+  const isErrorRoute = pathname.startsWith("/error");
 
   return (
     <nav
       className={`p-2 md:p-4 top-0 z-50 bg-background sticky ${
-        isAuthRoute
+        isAuthRoute || isErrorRoute
           ? ""
           : "shadow-md border-0 dark:border-b dark:border-border"
       }`}
@@ -20,7 +22,11 @@ const Navbar = () => {
       <div className="flex items-center md:justify-between">
         {/*Left: burger mobile, logo + nav links desktop */}
         <div className="flex items-center w-1/3 md:w-auto">
-          <div className={`md:hidden ${isAuthRoute ? "invisible" : ""}`}>
+          <div
+            className={`md:hidden ${
+              isAuthRoute || isErrorRoute ? "invisible" : ""
+            }`}
+          >
             {/* Mobile burger menu */}
             <AnchoredMenu
               button={
@@ -72,7 +78,7 @@ const Navbar = () => {
               JAKT
             </Link>
 
-            {!isAuthRoute && (
+            {!(isAuthRoute || isErrorRoute) && (
               <div className="hidden md:flex space-x-4">
                 <Link
                   href="/dashboard"
@@ -113,13 +119,15 @@ const Navbar = () => {
         {/* Right side: user icon/auth buttons */}
         <div className="flex justify-end items-center w-1/3 md:w-auto">
           {/* Theme toggle always visible */}
-          <div className="mr-2 md:mr-4">
-            <ThemeToggle />
-          </div>
+          {!isErrorRoute && (
+            <div className="mr-2 md:mr-4">
+              <ThemeToggle />
+            </div>
+          )}
           {/* Desktop auth buttons */}
           <div
             className={`hidden items-center space-x-4 ${
-              isAuthRoute ? "md:hidden" : "md:flex"
+              isAuthRoute || isErrorRoute ? "md:hidden" : "md:flex"
             }`}
           >
             <Link
@@ -137,7 +145,7 @@ const Navbar = () => {
           </div>
 
           {/* Mobile user icon */}
-          <div className={`md:hidden ${isAuthRoute ? "invisible" : ""}`}>
+          <div className={`md:hidden ${(isAuthRoute || isErrorRoute) ? "invisible" : ""}`}>
             <AnchoredMenu
               align="right"
               button={

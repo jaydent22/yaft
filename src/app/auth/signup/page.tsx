@@ -9,7 +9,7 @@ export default function Signup() {
       </h1>
 
       <form className="space-y-6 md:space-y-12" action="" method="POST">
-        <FloatingInput
+        {/* <FloatingInput
           id="signup-first-name"
           name="firstName"
           label="First Name"
@@ -18,7 +18,7 @@ export default function Signup() {
           id="signup-last-name"
           name="lastName"
           label="Last Name"
-        />
+        /> */}
         <FloatingInput
           id="signup-email"
           name="email"
