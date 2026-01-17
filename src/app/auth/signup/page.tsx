@@ -1,5 +1,6 @@
 import Link from "next/link";
 import FloatingInput from "../../../components/FloatingInput";
+import { signup } from "../actions";
 
 export default function Signup() {
   return (
@@ -42,6 +43,7 @@ export default function Signup() {
 
         <button
           type="submit"
+          formAction={signup}
           className="w-full bg-accent text-white py-3 rounded-md hover:bg-accent-hover focus:outline-none active:bg-accent-active"
         >
           Sign Up

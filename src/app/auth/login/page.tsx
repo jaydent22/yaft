@@ -1,5 +1,6 @@
 import Link from "next/link";
 import FloatingInput from "../../../components/FloatingInput";
+import { login } from "../actions";
 
 export default function Login() {
   return (
@@ -25,9 +26,10 @@ export default function Login() {
 
         <button
           type="submit"
+          formAction={login}
           className="w-full bg-accent text-white py-3 rounded-md hover:bg-accent-hover focus:outline-none active:bg-accent-active"
         >
-          Sign In
+          Log In
         </button>
 
         <div className="grid grid-cols-2 text-sm">
