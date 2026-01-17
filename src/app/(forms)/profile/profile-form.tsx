@@ -7,7 +7,7 @@ import { type User } from "@supabase/supabase-js";
 
 import FloatingInput from "../../../components/FloatingInput";
 
-export default function AccountForm({ user }: { user: User | null }) {
+export default function ProfileForm({ user }: { user: User | null }) {
   const supabase = createClient();
   const [loading, setLoading] = useState(true);
   const [firstName, setFirstName] = useState<string | null>(null);
@@ -73,6 +73,7 @@ export default function AccountForm({ user }: { user: User | null }) {
 
       const { error } = await supabase.from("profiles").upsert({
         id: user?.id as string,
+        email: user?.email as string,
         first_name: firstName,
         last_name: lastName,
         display_name: displayName,
@@ -164,19 +165,19 @@ export default function AccountForm({ user }: { user: User | null }) {
         >
           {loading ? "Loading ..." : "Update"}
         </button>
-        
-        {/* Logout button hidden for new users */}
-        {!isNewUser && (
-          <form action="/auth/logout" method="POST">
-            <button
-              type="submit"
-              className="w-full bg-red-600 text-white py-3 rounded-md hover:bg-red-700 focus:outline-none active:bg-red-800"
-            >
-              Logout
-            </button>
-          </form>
-        )}
       </form>
+
+      {/* Signout button hidden for new users */}
+      {!isNewUser && (
+        <form action="/auth/signout" method="POST">
+          <button
+            type="submit"
+            className="w-full bg-red-600 text-white py-3 rounded-md hover:bg-red-700 focus:outline-none active:bg-red-800"
+          >
+            Sign Out
+          </button>
+        </form>
+      )}
     </>
   );
 }

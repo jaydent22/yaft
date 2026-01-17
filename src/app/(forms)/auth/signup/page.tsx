@@ -10,21 +10,12 @@ export default function Signup() {
       </h1>
 
       <form className="space-y-6 md:space-y-12" action="" method="POST">
-        {/* <FloatingInput
-          id="signup-first-name"
-          name="firstName"
-          label="First Name"
-        />
-        <FloatingInput
-          id="signup-last-name"
-          name="lastName"
-          label="Last Name"
-        /> */}
         <FloatingInput
           id="signup-email"
           name="email"
           type="email"
           label="Email address"
+          required
         />
 
         <FloatingInput
@@ -32,6 +23,7 @@ export default function Signup() {
           name="password"
           type="password"
           label="Password"
+          required
         />
 
         <FloatingInput
@@ -39,6 +31,7 @@ export default function Signup() {
           name="confirmPassword"
           type="password"
           label="Confirm Password"
+          required
         />
 
         <button
