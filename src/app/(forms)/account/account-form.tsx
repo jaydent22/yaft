@@ -2,10 +2,10 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { createClient } from "../../lib/supabase/client";
+import { createClient } from "../../../lib/supabase/client";
 import { type User } from "@supabase/supabase-js";
 
-import FloatingInput from "../../components/FloatingInput";
+import FloatingInput from "../../../components/FloatingInput";
 
 export default function AccountForm({ user }: { user: User | null }) {
   const supabase = createClient();

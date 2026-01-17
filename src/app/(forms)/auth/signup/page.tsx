@@ -1,5 +1,5 @@
 import Link from "next/link";
-import FloatingInput from "../../../components/FloatingInput";
+import FloatingInput from "../../../../components/FloatingInput";
 import { signup } from "../actions";
 
 export default function Signup() {
