@@ -4,9 +4,21 @@ import Link from "next/link";
 import AnchoredMenu from "./AnchoredMenu";
 import ThemeToggle from "./ThemeToggle";
 import { usePathname } from "next/navigation";
-import { isError } from "util";
+import { type User } from "@supabase/supabase-js";
 
-const Navbar = () => {
+type NavbarProps = {
+  user: User | null;
+  profile?: {
+    email: string;
+    first_name: string;
+    last_name: string;
+    display_name: string;
+  } | null;
+}
+
+const Navbar = ({ user, profile }: NavbarProps) => {
+  const isLoggedIn = !!user;
+
   const pathname = usePathname();
   const isAuthRoute = pathname.startsWith("/auth");
   const isErrorRoute = pathname.startsWith("/error");
@@ -57,7 +69,7 @@ const Navbar = () => {
                     <Link
                       key={item.href}
                       href={item.href}
-                      className="dropdown-item active:bg-surface-active"
+                      className="dropdown-item px-2 py-1 rounded-md dropdown-item hover:bg-surface-hover active:bg-surface-active"
                       onClick={closeMenu}
                     >
                       {item.label}
@@ -80,30 +92,24 @@ const Navbar = () => {
 
             {!(isAuthRoute || isErrorRoute) && (
               <div className="hidden md:flex space-x-4">
-                <Link
-                  href="/dashboard"
-                  className="nav-link text-foreground hover:text-accent"
-                >
-                  Dashboard
-                </Link>
-                <Link
-                  href="/programs"
-                  className="nav-link text-foreground hover:text-accent"
-                >
-                  Programs
-                </Link>
-                <Link
-                  href="/workouts"
-                  className="nav-link text-foreground hover:text-accent"
-                >
-                  Workouts
-                </Link>
-                <Link
-                  href="/progress"
-                  className="nav-link text-foreground hover:text-accent"
-                >
-                  Progress
-                </Link>
+                {isLoggedIn && (
+                  <>
+                  {[
+                    { href: "/dashboard", label: "Dashboard" },
+                    { href: "/programs", label: "Programs" },
+                    { href: "/workouts", label: "Workouts" },
+                    { href: "/progress", label: "Progress" },
+                  ].map((item) => (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      className="nav-link text-foreground hover:text-accent active:text-accent-active"
+                    >
+                      {item.label}
+                    </Link>
+                  ))}
+                  </>
+                )}
               </div>
             )}
           </div>
@@ -125,14 +131,14 @@ const Navbar = () => {
             </div>
           )}
           {/* Desktop auth buttons */}
-          <div
+          {!isLoggedIn && (<div
             className={`hidden items-center space-x-4 ${
               isAuthRoute || isErrorRoute ? "md:hidden" : "md:flex"
             }`}
           >
             <Link
               href="/auth/login"
-              className="text-foreground hover:text-accent"
+              className="text-foreground hover:text-accent-hover active:text-accent-active"
             >
               Login
             </Link>
@@ -142,10 +148,14 @@ const Navbar = () => {
             >
               Sign Up
             </Link>
-          </div>
+          </div>)}
 
-          {/* Mobile user icon */}
-          <div className={`md:hidden ${(isAuthRoute || isErrorRoute) ? "invisible" : ""}`}>
+          {/* Logged in & mobile user icon */}
+          <div
+            className={`${isLoggedIn ? "" : "md:hidden"} ${
+              isAuthRoute || isErrorRoute ? "invisible" : ""
+            }`}
+          >
             <AnchoredMenu
               align="right"
               button={
@@ -170,19 +180,50 @@ const Navbar = () => {
             >
               {({ closeMenu }) => (
                 <div className="flex flex-col p-4 space-y-2">
-                  {[
-                    { href: "/auth/login", label: "Login" },
-                    { href: "/auth/signup", label: "Sign Up" },
-                  ].map((item) => (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      className="dropdown-item"
-                      onClick={closeMenu}
-                    >
-                      {item.label}
-                    </Link>
-                  ))}
+                  {isLoggedIn ? (
+                    <>
+                      <div className="px-2 py-1 text-foreground">
+                        <h1 className="font-semibold">
+                          Welcome, {profile?.display_name ||
+                            profile?.first_name ||
+                            profile?.email ||
+                            "User"}
+                        </h1>
+                      </div>
+                      <hr className="border-border" />
+                      <Link
+                        href="/profile"
+                        className="dropdown-item px-2 py-1 rounded-md hover:bg-surface-hover active:bg-surface-active"
+                        onClick={closeMenu}
+                      >
+                        Profile
+                      </Link>
+                      <form action="/auth/signout" method="POST">
+                        <button
+                          type="submit"
+                          className="w-full px-2 py-1 rounded-md text-left focus:outline-none hover:bg-red-600 hover:text-white active:bg-red-700"
+                        >
+                          Sign Out
+                        </button>
+                      </form>
+                    </>
+                  ) : (
+                    <>
+                      {[
+                        { href: "/auth/login", label: "Login" },
+                        { href: "/auth/signup", label: "Sign Up" },
+                      ].map((item) => (
+                        <Link
+                          key={item.href}
+                          href={item.href}
+                          className="dropdown-item hover:text-accent-hover active:text-accent-active"
+                          onClick={closeMenu}
+                        >
+                          {item.label}
+                        </Link>
+                      ))}
+                    </>
+                  )}
                 </div>
               )}
             </AnchoredMenu>
