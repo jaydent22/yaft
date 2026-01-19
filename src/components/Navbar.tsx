@@ -198,6 +198,7 @@ const Navbar = ({ user, profile }: NavbarProps) => {
                       >
                         Profile
                       </Link>
+                      <hr className="border-border" />
                       <form action="/auth/signout" method="POST">
                         <button
                           type="submit"

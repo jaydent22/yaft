@@ -15,8 +15,9 @@ export default function ProfileForm({ user }: { user: User | null }) {
   const [displayName, setDisplayName] = useState<string | null>(null);
   const [heightCm, setHeightCm] = useState<number | null>(null);
   const [weightKg, setWeightKg] = useState<number | null>(null);
+  const [onboarded, setOnboarded] = useState<boolean>(false);
 
-  const isNewUser = !firstName && !lastName;
+  const isNewUser = !onboarded;
   const router = useRouter();
 
   const getProfile = useCallback(async () => {
@@ -26,7 +27,7 @@ export default function ProfileForm({ user }: { user: User | null }) {
       const { data, error, status } = await supabase
         .from("profiles")
         .select(
-          "email, first_name, last_name, display_name, height_cm, weight_kg"
+          "email, first_name, last_name, display_name, height_cm, weight_kg, onboarded"
         )
         .eq("id", user?.id)
         .single();
@@ -42,6 +43,7 @@ export default function ProfileForm({ user }: { user: User | null }) {
         setDisplayName(data.display_name);
         setHeightCm(data.height_cm);
         setWeightKg(data.weight_kg);
+        setOnboarded(data.onboarded);
       }
     } catch (error) {
       alert("Error loading user data!");
@@ -61,12 +63,14 @@ export default function ProfileForm({ user }: { user: User | null }) {
     displayName,
     heightCm,
     weightKg,
+    onboarded,
   }: {
     firstName: string | null;
     lastName: string | null;
     displayName?: string | null;
     heightCm?: number | null;
     weightKg?: number | null;
+    onboarded?: boolean;
   }) {
     try {
       setLoading(true);
@@ -79,14 +83,17 @@ export default function ProfileForm({ user }: { user: User | null }) {
         display_name: displayName,
         height_cm: heightCm,
         weight_kg: weightKg,
+        onboarded: true,
         updated_at: new Date().toISOString(),
       });
       if (error) throw error;
 
       if (isNewUser) {
         router.push("/dashboard");
+        router.refresh();
       } else {
         alert("Profile updated successfully!");
+        router.refresh();
       }
     } catch (error) {
       alert("Error updating the data!");
@@ -163,21 +170,9 @@ export default function ProfileForm({ user }: { user: User | null }) {
           disabled={loading}
           className="w-full bg-accent text-white py-3 rounded-md hover:bg-accent-hover focus:outline-none active:bg-accent-active"
         >
-          {loading ? "Loading ..." : "Update"}
+          {loading ? "Loading ..." : isNewUser ? "Complete Profile" : "Update"}
         </button>
       </form>
-
-      {/* Signout button hidden for new users */}
-      {!isNewUser && (
-        <form action="/auth/signout" method="POST">
-          <button
-            type="submit"
-            className="w-full bg-red-600 text-white py-3 rounded-md hover:bg-red-700 focus:outline-none active:bg-red-800"
-          >
-            Sign Out
-          </button>
-        </form>
-      )}
     </>
   );
 }

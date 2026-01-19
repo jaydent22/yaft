@@ -1,7 +1,11 @@
 import Navbar from "./Navbar";
 import { createClient } from "../lib/supabase/server";
+import { unstable_noStore } from "next/cache";
 
 export default async function NavbarWrapper() {
+    // Do not cache this component
+    unstable_noStore();
+
     const supabase = await createClient();
     const {
         data: { user },

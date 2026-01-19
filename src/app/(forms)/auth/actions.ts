@@ -8,18 +8,27 @@ import { createClient } from "../../../lib/supabase/server";
 export async function login(formData: FormData) {
     const supabase = await createClient();
 
-    const data = {
+    const {data, error} = await supabase.auth.signInWithPassword({
         email: formData.get("email") as string,
         password: formData.get("password") as string,
-    }
-
-    const { error } = await supabase.auth.signInWithPassword(data);
-
+    })
+    
     if (error) {
         redirect("/error");
     }
 
+    const { data: profile, error: profileError } = await supabase
+        .from("profiles")
+        .select("onboarded")
+        .eq("id", data.user?.id)
+        .single();
+
     revalidatePath("/", "layout");
+    
+    if (profileError || !profile?.onboarded) {
+        redirect("/profile");
+    }
+
     redirect("/dashboard");
 }
 
