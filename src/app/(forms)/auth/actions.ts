@@ -14,7 +14,7 @@ export async function login(formData: FormData) {
     })
     
     if (error) {
-        redirect("/error");
+        throw new Error(`Error logging in: ${error.message}`);
     }
 
     const { data: profile, error: profileError } = await supabase
@@ -24,7 +24,7 @@ export async function login(formData: FormData) {
         .single();
 
     revalidatePath("/", "layout");
-    
+
     if (profileError || !profile?.onboarded) {
         redirect("/profile");
     }
@@ -43,19 +43,17 @@ export async function signup(formData: FormData) {
 
     if (!data.email || !data.password || !data.confirmPassword) {
         // return { error: "All fields are required" };
-        redirect(`/error?${encodeURIComponent("All fields are required")}`);
+        throw new Error("All fields are required");
     }
 
     if (data.password !== data.confirmPassword) {
-        // return { error: "Passwords do not match" };
-        redirect(`/error?${encodeURIComponent("Passwords do not match")}`);
+        throw new Error("Passwords do not match");        
     }
 
     const { error } = await supabase.auth.signUp(data);
 
     if (error) {
-        // return { error: error.message };
-        redirect(`/error?${encodeURIComponent(error.message)}`);
+        throw new Error(`Error signing up: ${error.message}`);
     }
 
     revalidatePath("/", "layout");

@@ -15,9 +15,10 @@ export default function ProfileForm({ user }: { user: User | null }) {
   const [displayName, setDisplayName] = useState<string | null>(null);
   const [heightCm, setHeightCm] = useState<number | null>(null);
   const [weightKg, setWeightKg] = useState<number | null>(null);
-  const [onboarded, setOnboarded] = useState<boolean>(false);
+  const [onboarded, setOnboarded] = useState<boolean | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
-  const isNewUser = !onboarded;
+  const isNewUser = onboarded === false;
   const router = useRouter();
 
   const getProfile = useCallback(async () => {
@@ -95,12 +96,22 @@ export default function ProfileForm({ user }: { user: User | null }) {
         alert("Profile updated successfully!");
         router.refresh();
       }
-    } catch (error) {
-      alert("Error updating the data!");
+    } catch (error: any) {
       console.log(error);
+      if (error?.message) {
+        setSubmitError(error.message);
+      }
     } finally {
       setLoading(false);
     }
+  }
+
+  if (loading || onboarded === null) {
+    return (
+      <h1 className="text-xl font-bold leading-tight tracking-tight text-foreground md:text-2xl mb-6 text-center">
+        Loading profile...
+      </h1>
+    );
   }
 
   return (
@@ -112,6 +123,7 @@ export default function ProfileForm({ user }: { user: User | null }) {
         className="space-y-6 md:space-y-12"
         onSubmit={(e) => {
           e.preventDefault();
+          setSubmitError(null);
           updateProfile({
             firstName,
             lastName,
@@ -165,6 +177,9 @@ export default function ProfileForm({ user }: { user: User | null }) {
             setWeightKg(e.target.value ? parseInt(e.target.value) : null)
           }
         />
+        {submitError && (
+          <p className="text-red-600 text-sm text-center">{submitError}</p>
+        )}
         <button
           type="submit"
           disabled={loading}

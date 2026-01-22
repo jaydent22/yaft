@@ -24,5 +24,9 @@ export default async function NavbarWrapper() {
     .eq("id", user.id)
     .single();
 
+    if (profileError) {
+      throw new Error(`Error fetching profile: ${profileError}`);
+    }
+
     return <Navbar user={user} profile={profile} />;
 }
