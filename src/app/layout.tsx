@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Navbar from "../components/Navbar";
+import NavbarWrapper from "../components/NavbarWrapper";
 import { ThemeProvider } from "next-themes";
 import { getTheme } from "../lib/getTheme";
 
@@ -34,7 +34,7 @@ export default function RootLayout({
         className={`bg-background min-h-screen flex flex-col ${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-            <Navbar />
+            <NavbarWrapper />
             <main className="flex-grow container mx-auto px-4 py-6">
               {children}
             </main>
