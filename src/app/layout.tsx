@@ -35,8 +35,10 @@ export default function RootLayout({
       >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <NavbarWrapper />
-            <main className="flex-grow container mx-auto px-4 py-6">
+            <main className="flex-1 flex flex-col">
+              <div className="container mx-auto px-4 py-6 flex-1 flex flex-col">
               {children}
+              </div>
             </main>
         </ThemeProvider>
       </body>
