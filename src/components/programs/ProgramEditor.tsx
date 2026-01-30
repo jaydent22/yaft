@@ -3,6 +3,21 @@
 import { useState } from "react";
 import FloatingInput from "../FloatingInput";
 
+type ProgramDraft = {
+  name: string;
+  description: string;
+  days: {
+      name: string;
+      dayNumber: number;
+      exercises: {
+          name: string;
+          sets: number;
+          reps: number;
+          sortOrder: number;
+      }[];
+  }[];
+}
+
 const ProgramEditor = () => {
   const [programName, setProgramName] = useState("");
   const [programDescription, setProgramDescription] = useState("");
