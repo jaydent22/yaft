@@ -117,7 +117,7 @@ export default function ProfileForm({ user }: { user: User | null }) {
   return (
     <>
       <h1 className="text-xl font-bold leading-tight tracking-tight text-foreground md:text-2xl mb-6 text-center">
-        {isNewUser ? "Complete your profile" : "Account Settings"}
+        {isNewUser ? "Complete your profile" : "Profile Settings"}
       </h1>
       <form
         className="space-y-6 md:space-y-12"
@@ -134,33 +134,33 @@ export default function ProfileForm({ user }: { user: User | null }) {
         }}
       >
         <FloatingInput
-          id="account-email"
+          id="profile-email"
           label="Email"
           value={user?.email}
           disabled
         />
         <FloatingInput
-          id="account-first-name"
+          id="profile-first-name"
           label="First Name"
           value={firstName ?? ""}
           onChange={(e) => setFirstName(e.target.value)}
           required
         />
         <FloatingInput
-          id="account-last-name"
+          id="profile-last-name"
           label="Last Name"
           value={lastName ?? ""}
           onChange={(e) => setLastName(e.target.value)}
           required
         />
         <FloatingInput
-          id="account-display-name"
+          id="profile-display-name"
           label="Display Name"
           value={displayName || ""}
           onChange={(e) => setDisplayName(e.target.value)}
         />
         <FloatingInput
-          id="account-height-cm"
+          id="profile-height-cm"
           label="Height (cm)"
           type="number"
           value={heightCm !== null ? String(heightCm) : ""}
@@ -169,7 +169,7 @@ export default function ProfileForm({ user }: { user: User | null }) {
           }
         />
         <FloatingInput
-          id="account-weight-kg"
+          id="profile-weight-kg"
           label="Weight (kg)"
           type="number"
           value={weightKg !== null ? String(weightKg) : ""}
@@ -185,7 +185,7 @@ export default function ProfileForm({ user }: { user: User | null }) {
           disabled={loading}
           className="w-full bg-accent text-white py-3 rounded-md hover:bg-accent-hover focus:outline-none active:bg-accent-active"
         >
-          {loading ? "Loading ..." : isNewUser ? "Complete Profile" : "Update"}
+          {loading ? "Loading..." : isNewUser ? "Complete Profile" : "Update"}
         </button>
       </form>
     </>
