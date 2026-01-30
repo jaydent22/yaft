@@ -31,6 +31,7 @@ const AnchoredMenu = ({
   return (
     <div ref={ref} className="relative">
       <button
+        type="button"
         onPointerDown={(e) => {
           e.stopPropagation();
           setIsOpen((prev) => !prev);
