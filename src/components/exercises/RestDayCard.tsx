@@ -4,12 +4,12 @@ const RestDayCard = ({
     onDelete: () => void;
 }) => {
   return (
-    <div className="border border-border rounded-lg p-2 md:p-4">
-      <p>Rest Day Card</p>
+    <div className="border border-border rounded-lg p-2 md:p-4 bg-background-muted max-w-xs flex flex-col space-y-2">
+      <p className="border-b border-border">Rest Day</p>
       <button
         type="button"
         onClick={onDelete}
-        className="p-2 hover:bg-red-500 rounded-md"
+        className="inline-flex self-start hover:bg-red-500 rounded-md"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"

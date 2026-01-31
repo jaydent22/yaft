@@ -1,13 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import type { Exercise, ProgramDay } from "../programs/ProgramEditor";
+import type { ExerciseDay } from "../programs/ProgramEditor";
 import ExerciseDayModal from "./ExerciseDayModal";
-
-type ExerciseDay = ProgramDay & {
-  type: "exercise";
-  exercises: Exercise[];
-};
 
 const ExerciseDayCard = ({
   day,
@@ -24,16 +19,25 @@ const ExerciseDayCard = ({
       role="button"
       tabIndex={0}
       onClick={() => setIsModalOpen(true)}
-      className="border border-border rounded-lg p-4 bg-surface hover:bg-surface-hover cursor-pointer"
+      className="border border-border rounded-lg p-2 md:p-4 bg-surface hover:bg-surface-hover cursor-pointer max-w-xs flex flex-col space-y-2"
     >
-      <p>Exercise Day Card</p>
+      <p className="border-b border-border">{day.name}</p>
+      {(day.exercises.length === 0) ? (
+        <p className="text-foreground-muted text-sm italic">No exercises added</p>
+      ) :
+        day.exercises.map((exercise, index) => (
+          <p key={index} className="text-foreground">
+            {exercise.name} &mdash; {exercise.sets} sets &times; {exercise.reps} reps
+          </p>
+        )
+      )}
       <button
         type="button"
         onClick={(e) => {
           e.stopPropagation();
           onDelete();
         }}
-        className="hover:bg-red-500 rounded-md"
+        className="inline-flex self-start hover:bg-red-500 rounded-md "
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -50,15 +54,16 @@ const ExerciseDayCard = ({
           />
         </svg>
       </button>
-        <ExerciseDayModal
-            isOpen={isModalOpen}
-            onClose={() => setIsModalOpen(false)}
-            // day={day}
-            // onSave={(updatedDay) => {
-            // onUpdate(updatedDay);
-            // setIsModalOpen(false);
-            // }}
-        />
+      <ExerciseDayModal
+        day={day}
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        // day={day}
+        // onSave={(updatedDay) => {
+        // onUpdate(updatedDay);
+        // setIsModalOpen(false);
+        // }}
+      />
     </div>
   );
 };
