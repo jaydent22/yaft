@@ -16,7 +16,7 @@ export default async function Programs() {
   return (
     <div className="text-center">
       <h1 className="text-4xl font-bold text-accent mb-4">Programs</h1>
-    
+
       {data && data.length == 0 && (
         <p className="text-lg text-foreground">
           You have no programs yet. Create a new program to get started!
@@ -28,7 +28,28 @@ export default async function Programs() {
       >
         Create New Program
       </a>
-      <div className="grid grid-cols-3 gap-4"></div>
+      <div className="grid grid-cols-3 gap-4">
+        {data &&
+          data.map((program) => (
+            <div
+              key={program.id}
+              className="border border-border rounded-lg p-4 hover:shadow-lg transition-shadow"
+            >
+              <h2 className="text-2xl font-bold text-foreground mb-2">
+                {program.name}
+              </h2>
+              <p className="text-foreground mb-4">
+                {program.description || "No description provided."}
+              </p>
+              <a
+                href={`/programs/${program.id}`}
+                className="mt-6 inline-block px-4 py-2 bg-accent text-white rounded hover:bg-accent-dark"
+                >
+                View Program
+              </a>
+            </div>
+          ))}
+      </div>
     </div>
   );
 }

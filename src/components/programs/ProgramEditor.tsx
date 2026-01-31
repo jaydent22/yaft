@@ -5,9 +5,11 @@ import FloatingInput from "../FloatingInput";
 import ExerciseDayCard from "../exercises/ExerciseDayCard";
 import RestDayCard from "../exercises/RestDayCard";
 import AddDayButton from "./AddDayButton";
+import { createProgram } from "./actions";
 
 export type Exercise = {
   id: string; // temp id
+  // exercise_id: string; // canonical id from exercises table
   name: string;
   sets: number;
   reps: number;
@@ -94,9 +96,18 @@ const ProgramEditor = () => {
     });
   }
 
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+
+    const formData = new FormData();
+    formData.set("program", JSON.stringify(program));
+
+    await createProgram(formData);
+  }
+
   return (
     <div className="flex flex-col flex-1">
-      <form className="flex flex-col flex-1">
+      <form className="flex flex-col flex-1" onSubmit={handleSubmit}>
         <div className="mb-4 md:mb-8 space-y-4">
           <FloatingInput
             id="program-name"
