@@ -14,7 +14,7 @@ export default async function Programs() {
     .eq("user_id", user?.id);
 
   return (
-    <div className="text-center">
+    <div className="text-center space-y-2 md:space-y-4">
       <h1 className="text-4xl font-bold text-accent mb-4">Programs</h1>
 
       {data && data.length == 0 && (
@@ -28,7 +28,7 @@ export default async function Programs() {
       >
         Create New Program
       </a>
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {data &&
           data.map((program) => (
             <div
