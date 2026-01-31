@@ -1,10 +1,10 @@
-import type { Exercise } from "../programs/ProgramEditor";
+import type { ExerciseSearchResult } from "./ExerciseSearch";
 
 const ExerciseCard = ({
   exercise,
   onClick,
 }: {
-  exercise: Exercise;
+  exercise: ExerciseSearchResult;
   onClick: () => void;
 }) => {
   return (

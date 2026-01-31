@@ -8,26 +8,30 @@ import AddDayButton from "./AddDayButton";
 import { createProgram } from "./actions";
 
 export type Exercise = {
-  id: string; // temp id
-  // exercise_id: string; // canonical id from exercises table
+  clientId: string; // temp id for client-side only
+  id?: string; // DB id from program_day_exercises table
+  exerciseId: string; // DB id from exercises table
   name: string;
   sets: number;
   reps: number;
   sortOrder: number;
 };
 
-export type ExerciseDay = {
-  id: string; // temp id
+type BaseDay = {
+  clientId: string; // temp id for client-side only
+  dayNumber: number;
+}
+
+export type ExerciseDay = BaseDay & {
+  id?: string; // DB id
   type: "exercise";
   name?: string;
-  dayNumber: number;
   exercises: Exercise[];
 };
 
-export type RestDay = {
-  id: string; // temp id
+export type RestDay = BaseDay & {
+  id?: string; // DB id
   type: "rest";
-  dayNumber: number;
 };
 
 type ProgramDay = ExerciseDay | RestDay;
@@ -50,14 +54,14 @@ const ProgramEditor = () => {
       const newDay: ProgramDay =
         type === "exercise"
           ? {
-              id: crypto.randomUUID(),
+              clientId: crypto.randomUUID(),
               type: "exercise",
               name: undefined,
               dayNumber: 0,
               exercises: []
             }
           : {
-              id: crypto.randomUUID(),
+              clientId: crypto.randomUUID(),
               type: "rest",
               dayNumber: 0,
             };
@@ -149,19 +153,19 @@ const ProgramEditor = () => {
                 }`;
 
                 return (
-                  <Fragment key={day.id}>
+                  <Fragment key={day.clientId}>
                     <ExerciseDayCard
                       day={{ ...day, name: day.name ?? defaultName }}
                       onUpdate={handleDayUpdate}
-                      onDelete={() => handleDayDelete(day.id)}
+                      onDelete={() => handleDayDelete(day.clientId)}
                     />
                     <AddDayButton index={index + 1} onAddDay={addDay} />
                   </Fragment>
                 );
               } else {
                 return (
-                  <Fragment key={day.id}>
-                    <RestDayCard onDelete={() => handleDayDelete(day.id)} />
+                  <Fragment key={day.clientId}>
+                    <RestDayCard onDelete={() => handleDayDelete(day.clientId)} />
                     <AddDayButton index={index + 1} onAddDay={addDay} />
                   </Fragment>
                 );

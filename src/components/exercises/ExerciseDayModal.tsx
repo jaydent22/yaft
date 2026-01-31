@@ -2,9 +2,9 @@ import { useState } from "react";
 
 import Modal from "../Modal";
 import FloatingInput from "../FloatingInput";
-import type { ExerciseDay } from "../programs/ProgramEditor";
+import type { Exercise, ExerciseDay } from "../programs/ProgramEditor";
+import type { ExerciseSearchResult } from "./ExerciseSearch";
 import ExerciseSearch from "./ExerciseSearch";
-import type { Exercise } from "../programs/ProgramEditor";
 
 const ExerciseDayModal = ({
   day,
@@ -38,15 +38,16 @@ const ExerciseDayModal = ({
     onClose();
   }
 
-  function handleSelectExercise(exercise: Exercise) {
+  function handleSelectExercise(exercise: ExerciseSearchResult) {
     setExercises((prevExercises) => {
-      if (prevExercises.some((ex) => ex.id === exercise.id))
+      if (prevExercises.some((ex) => ex.exerciseId === exercise.id))
         return prevExercises; // Exercise already added
 
       return [
         ...prevExercises,
         {
-          id: exercise.id,
+          clientId: crypto.randomUUID(),
+          exerciseId: exercise.id,
           name: exercise.name,
           sets: 3, // default sets
           reps: 10, // default reps
@@ -69,7 +70,7 @@ const ExerciseDayModal = ({
         />
         {exercises.map((exercise, index) => (
           <div
-            key={exercise.id}
+            key={exercise.exerciseId}
             className="mt-4 items-center gap-3 text-sm md:text-base"
           >
             <span className="flex-1 text-foreground">{exercise.name}: </span>
@@ -97,7 +98,7 @@ const ExerciseDayModal = ({
               onChange={(e) =>
                 setExercises((prevExercises) =>
                   prevExercises.map((ex) =>
-                    ex.id === exercise.id
+                    ex.exerciseId === exercise.exerciseId
                       ? { ...ex, reps: parseInt(e.target.value, 10) }
                       : ex
                   )

@@ -4,13 +4,21 @@ import type { Exercise } from "../programs/ProgramEditor";
 import { searchExercises } from "./actions";
 import ExerciseCard from "./ExerciseCard";
 
+export type ExerciseSearchResult = {
+  id: string;
+  name: string;
+  description?: string;
+  equipmentId?: string;
+  muscleGroupId?: string;
+}
+
 const ExerciseSearch = ({
   onSelectExercise,
 }: {
-  onSelectExercise: (exercise: Exercise) => void;
+  onSelectExercise: (exercise: ExerciseSearchResult) => void;
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [results, setResults] = useState<Exercise[]>([]);
+  const [results, setResults] = useState<ExerciseSearchResult[]>([]);
 
   const handleSearch = async (term: string) => {
     setSearchTerm(term);

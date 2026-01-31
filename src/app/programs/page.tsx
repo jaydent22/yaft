@@ -39,7 +39,7 @@ export default async function Programs() {
                 {program.name}
               </h2>
               <p className="text-foreground mb-4">
-                {program.description || "No description provided."}
+                {program.description}
               </p>
               <a
                 href={`/programs/${program.id}`}

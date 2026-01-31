@@ -6,25 +6,51 @@ import { z } from "zod";
 
 import { createClient } from "../../lib/supabase/server";
 
+// const ProgramSchema = z.object({
+//   name: z.string().min(1, "Program name is required"),
+//   description: z.string().optional(),
+//   days: z.array(
+//     z.object({
+//       type: z.enum(["exercise", "rest"]),
+//       name: z.string().optional(),
+//       dayNumber: z.number(),
+//       exercises: z
+//         .array(
+//           z.object({
+//             id: z.string(),
+//             sets: z.number().min(1),
+//             reps: z.number().min(1),
+//             sortOrder: z.number(),
+//           })
+//         )
+//         .optional(),
+//     })
+//   ),
+// });
+
 const ProgramSchema = z.object({
   name: z.string().min(1, "Program name is required"),
   description: z.string().optional(),
   days: z.array(
-    z.object({
-      type: z.enum(["exercise", "rest"]),
-      name: z.string().optional(),
-      dayNumber: z.number(),
-      exercises: z
-        .array(
+    z.discriminatedUnion("type", [
+      z.object({
+        type: z.literal("rest"),
+        dayNumber: z.number(),
+      }),
+      z.object({
+        type: z.literal("exercise"),
+        name: z.string().optional(),
+        dayNumber: z.number(),
+        exercises: z.array(
           z.object({
-            id: z.string(),
+            exerciseId: z.string(),
             sets: z.number().min(1),
             reps: z.number().min(1),
             sortOrder: z.number(),
           })
-        )
-        .optional(),
-    })
+        ),
+      }),
+    ])
   ),
 });
 
@@ -90,7 +116,7 @@ export async function createProgram(formData: FormData) {
       day.exercises?.forEach((exercise) => {
         exercisesToinsert.push({
           program_day_id: dayId,
-          exercise_id: exercise.id,
+          exercise_id: exercise.exerciseId,
           target_sets: exercise.sets,
           target_reps: exercise.reps,
           sort_order: exercise.sortOrder,
@@ -151,7 +177,7 @@ export async function createProgram(formData: FormData) {
 //     .eq("program_id", programId);
 
 //   const existingDayIds = new Set(existingDays?.map(d => d.id));
-  
+
 //   // Upsert program days
 //   const daysToUdpate = program?.days.map((day) => ({
 //     program_id: programId,
@@ -167,7 +193,6 @@ export async function createProgram(formData: FormData) {
 //     throw daysError;
 //   }
 
-  
 // }
 
 export async function deleteProgram(programId: string) {
