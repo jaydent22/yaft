@@ -112,3 +112,84 @@ export async function createProgram(formData: FormData) {
   revalidatePath("/programs");
   redirect("/programs");
 }
+
+// export async function editProgram(programId: string, formData: FormData) {
+//   const supabase = await createClient();
+
+//   const {
+//     data: { user },
+//   } = await supabase.auth.getUser();
+//   const userId = user?.id;
+//   if (!userId) {
+//     throw new Error("User not authenticated");
+//   }
+
+//   const programJson = formData.get("program");
+//   if (!programJson || typeof programJson !== "string") {
+//     throw new Error("Invalid program data");
+//   }
+
+//   const parsedProgram = ProgramSchema.safeParse(JSON.parse(programJson));
+//   const program = parsedProgram.success ? parsedProgram.data : null;
+
+//   const { error: programError } = await supabase
+//     .from("programs")
+//     .update({
+//       name: program?.name,
+//       description: program?.description,
+//     })
+//     .eq("id", programId)
+//     .eq("user_id", userId);
+//   if (programError) {
+//     throw programError;
+//   }
+
+//   // Delete days (if necessary)
+//   const { data: existingDays } = await supabase
+//     .from("program_days")
+//     .select("id")
+//     .eq("program_id", programId);
+
+//   const existingDayIds = new Set(existingDays?.map(d => d.id));
+  
+//   // Upsert program days
+//   const daysToUdpate = program?.days.map((day) => ({
+//     program_id: programId,
+//     name: day.type === "exercise" ? day.name : "Rest Day",
+//     day_number: day.dayNumber,
+//   }))
+
+//   const { error: daysError } = await supabase
+//     .from("program_days")
+//     .upsert(daysToUdpate)
+//     .eq("program_id", programId);
+//   if (daysError) {
+//     throw daysError;
+//   }
+
+  
+// }
+
+export async function deleteProgram(programId: string) {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const userId = user?.id;
+  if (!userId) {
+    throw new Error("User not authenticated");
+  }
+
+  const { error } = await supabase
+    .from("programs")
+    .delete()
+    .eq("id", programId)
+    .eq("user_id", userId);
+  if (error) {
+    throw error;
+  }
+  revalidatePath("/programs");
+  redirect("/programs");
+}

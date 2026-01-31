@@ -54,7 +54,7 @@ const ProgramEditor = () => {
               type: "exercise",
               name: undefined,
               dayNumber: 0,
-              exercises: [],
+              exercises: []
             }
           : {
               id: crypto.randomUUID(),
