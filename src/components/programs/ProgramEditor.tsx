@@ -20,7 +20,7 @@ export type Exercise = {
 type BaseDay = {
   clientId: string; // temp id for client-side only
   dayNumber: number;
-}
+};
 
 export type ExerciseDay = BaseDay & {
   id?: string; // DB id
@@ -36,14 +36,19 @@ export type RestDay = BaseDay & {
 
 type ProgramDay = ExerciseDay | RestDay;
 
-type ProgramDraft = {
+export type ProgramDraft = {
   name: string;
   description: string;
   days: ProgramDay[];
 };
 
-const ProgramEditor = () => {
-  const [program, setProgram] = useState<ProgramDraft>({
+const ProgramEditor = ({
+  programInfo,
+}: {
+  programInfo?: ProgramDraft;
+}) => {
+  const [program, setProgram] = useState<ProgramDraft>(
+    programInfo ?? {
     name: "",
     description: "",
     days: [],
@@ -58,7 +63,7 @@ const ProgramEditor = () => {
               type: "exercise",
               name: undefined,
               dayNumber: 0,
-              exercises: []
+              exercises: [],
             }
           : {
               clientId: crypto.randomUUID(),
@@ -83,7 +88,7 @@ const ProgramEditor = () => {
     setProgram((prevProgram) => ({
       ...prevProgram,
       days: prevProgram.days.map((day) =>
-        day.id === updatedDay.id ? updatedDay : day
+        day.clientId === updatedDay.clientId ? updatedDay : day
       ),
     }));
   }
@@ -91,7 +96,7 @@ const ProgramEditor = () => {
   function handleDayDelete(dayId: string) {
     setProgram((prevProgram) => {
       const updatedDays = prevProgram.days
-        .filter((day) => day.id !== dayId)
+        .filter((day) => day.clientId !== dayId)
         .map((day, i) => ({
           ...day,
           dayNumber: i + 1,
@@ -165,7 +170,9 @@ const ProgramEditor = () => {
               } else {
                 return (
                   <Fragment key={day.clientId}>
-                    <RestDayCard onDelete={() => handleDayDelete(day.clientId)} />
+                    <RestDayCard
+                      onDelete={() => handleDayDelete(day.clientId)}
+                    />
                     <AddDayButton index={index + 1} onAddDay={addDay} />
                   </Fragment>
                 );
