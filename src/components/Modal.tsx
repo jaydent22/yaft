@@ -11,7 +11,7 @@ const Modal = ({
 
   return (
     <div className="fixed inset-0 bg-black/75 flex items-center justify-center z-50 cursor-auto">
-      <div className="bg-background border border-border rounded-lg p-6 relative max-w-sm w-full" onClick={(e) => e.stopPropagation()}>
+      <div className="bg-background border border-border rounded-lg p-6 relative max-w-sm md:max-w-xl w-full" onClick={(e) => e.stopPropagation()}>
         <button
           type="button"
           onClick={onClose}

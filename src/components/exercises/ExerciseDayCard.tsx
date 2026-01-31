@@ -21,16 +21,8 @@ const ExerciseDayCard = ({
       onClick={() => setIsModalOpen(true)}
       className="border border-border rounded-lg p-2 md:p-4 bg-surface hover:bg-surface-hover cursor-pointer max-w-xs flex flex-col space-y-2"
     >
-      <p className="border-b border-border">{day.name}</p>
-      {(day.exercises.length === 0) ? (
-        <p className="text-foreground-muted text-sm italic">No exercises added</p>
-      ) :
-        day.exercises.map((exercise, index) => (
-          <p key={index} className="text-foreground">
-            {exercise.name} &mdash; {exercise.sets} sets &times; {exercise.reps} reps
-          </p>
-        )
-      )}
+        <div className="flex justify-between items-start gap-4 pb-2 border-b border-border">
+      <p >{day.name}</p>
       <button
         type="button"
         onClick={(e) => {
@@ -54,15 +46,24 @@ const ExerciseDayCard = ({
           />
         </svg>
       </button>
+      </div>
+      {(day.exercises.length === 0) ? (
+        <p className="text-foreground-muted text-sm italic">No exercises added</p>
+      ) :
+        day.exercises.map((exercise, index) => (
+          <p key={index} className="text-foreground">
+            {exercise.name}: {exercise.sets} &times; {exercise.reps}
+          </p>
+        )
+      )}
       <ExerciseDayModal
         day={day}
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        // day={day}
-        // onSave={(updatedDay) => {
-        // onUpdate(updatedDay);
-        // setIsModalOpen(false);
-        // }}
+        onSave={(updatedDay) => {
+        onUpdate(updatedDay);
+        setIsModalOpen(false);
+        }}
       />
     </div>
   );
