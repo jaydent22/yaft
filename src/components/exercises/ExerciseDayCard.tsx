@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { Exercise, ProgramDay } from "../programs/ProgramEditor";
+import ExerciseDayModal from "./ExerciseDayModal";
 
 type ExerciseDay = ProgramDay & {
   type: "exercise";
@@ -17,12 +18,21 @@ const ExerciseDayCard = ({
   onUpdate: (updatedDay: ExerciseDay) => void;
   onDelete: () => void;
 }) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
   return (
-    <div className="border border-border rounded-lg p-4 bg-background-muted">
+    <div
+      role="button"
+      tabIndex={0}
+      onClick={() => setIsModalOpen(true)}
+      className="border border-border rounded-lg p-4 bg-surface hover:bg-surface-hover cursor-pointer"
+    >
       <p>Exercise Day Card</p>
       <button
         type="button"
-        onClick={onDelete}
+        onClick={(e) => {
+          e.stopPropagation();
+          onDelete();
+        }}
         className="hover:bg-red-500 rounded-md"
       >
         <svg
@@ -40,6 +50,15 @@ const ExerciseDayCard = ({
           />
         </svg>
       </button>
+        <ExerciseDayModal
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+            // day={day}
+            // onSave={(updatedDay) => {
+            // onUpdate(updatedDay);
+            // setIsModalOpen(false);
+            // }}
+        />
     </div>
   );
 };
