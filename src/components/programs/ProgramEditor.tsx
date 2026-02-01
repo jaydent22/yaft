@@ -5,7 +5,7 @@ import FloatingInput from "../FloatingInput";
 import ExerciseDayCard from "../exercises/ExerciseDayCard";
 import RestDayCard from "../exercises/RestDayCard";
 import AddDayButton from "./AddDayButton";
-import { createProgram } from "./actions";
+import { createProgram, editProgram } from "./actions";
 
 export type Exercise = {
   clientId: string; // temp id for client-side only
@@ -44,15 +44,19 @@ export type ProgramDraft = {
 
 const ProgramEditor = ({
   programInfo,
+  programId,
 }: {
   programInfo?: ProgramDraft;
+  programId?: string;
 }) => {
   const [program, setProgram] = useState<ProgramDraft>(
     programInfo ?? {
-    name: "",
-    description: "",
-    days: [],
-  });
+      name: "",
+      description: "",
+      days: [],
+    }
+  );
+  const [saving, setSaving] = useState(false);
 
   function addDay(type: "exercise" | "rest", index: number) {
     setProgram((prevProgram) => {
@@ -106,12 +110,16 @@ const ProgramEditor = ({
   }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    setSaving(true);
     e.preventDefault();
 
     const formData = new FormData();
     formData.set("program", JSON.stringify(program));
 
-    await createProgram(formData);
+    programInfo && programId
+      ? await editProgram(formData, programId)
+      : await createProgram(formData);
+    setSaving(false);
   }
 
   return (
@@ -182,9 +190,10 @@ const ProgramEditor = ({
         </div>
         <button
           type="submit"
-          className="w-full bg-accent text-white py-3 rounded-md hover:bg-accent-hover focus:outline-none active:bg-accent-active"
+          disabled={saving}
+          className="w-full bg-accent text-white py-3 rounded-md hover:bg-accent-hover focus:outline-none active:bg-accent-active disabled:bg-accent-hover"
         >
-          Save Program
+          {saving ? "Saving..." : "Save Program"}
         </button>
       </form>
     </div>
