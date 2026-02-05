@@ -1,8 +1,8 @@
 "use server";
 
-import ProgramEditor from "../../../components/programs/ProgramEditor";
-import { createClient } from "../../../lib/supabase/server";
-import { getProgramDraft } from "../../../lib/actions/programs";
+import ProgramEditor from "../../../../components/programs/ProgramEditor";
+import { createClient } from "../../../../lib/supabase/server";
+import { getProgramDraft } from "../../../../lib/actions/programs";
 
 export default async function EditProgramPage({
   params,

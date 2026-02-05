@@ -112,10 +112,10 @@ export async function createProgram(formData: FormData) {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  const userId = user?.id;
-  if (!userId) {
+  if (!user) {
     throw new Error("User not authenticated");
   }
+  const userId = user?.id;
 
   const programJson = formData.get("program");
   if (!programJson || typeof programJson !== "string") {
@@ -198,10 +198,10 @@ export async function editProgram(formData: FormData, programId: string) {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  const userId = user?.id;
-  if (!userId) {
+  if (!user) {
     throw new Error("User not authenticated");
   }
+  const userId = user?.id;
 
   const programJson = formData.get("program");
   if (!programJson || typeof programJson !== "string") {
@@ -375,11 +375,10 @@ export async function deleteProgram(programId: string) {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-
-  const userId = user?.id;
-  if (!userId) {
+  if (!user) {
     throw new Error("User not authenticated");
   }
+  const userId = user?.id;
 
   const { error } = await supabase
     .from("programs")
