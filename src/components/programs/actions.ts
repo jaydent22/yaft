@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import type { ExerciseDay } from "./ProgramEditor";
+import { DayTypeEnum } from "../../lib/enums";
 
 import { createClient } from "../../lib/supabase/server";
 
@@ -11,15 +12,15 @@ const ProgramSchema = z.object({
   name: z.string().min(1, "Program name is required"),
   description: z.string().optional(),
   days: z.array(
-    z.discriminatedUnion("type", [
+    z.discriminatedUnion("dayType", [
       z.object({
         id: z.string().optional(),
-        type: z.literal("rest"),
+        dayType: z.literal("rest"),
         dayNumber: z.number(),
       }),
       z.object({
         id: z.string().optional(),
-        type: z.literal("exercise"),
+        dayType: z.literal("exercise"),
         name: z.string().optional(),
         dayNumber: z.number(),
         exercises: z.array(
@@ -75,8 +76,9 @@ export async function createProgram(formData: FormData) {
   // Insert program days
   const daysToInsert = program?.days.map((day) => ({
     program_id: programId,
-    name: day.type === "exercise" ? day.name : "Rest Day",
+    name: day.dayType === DayTypeEnum.enum.exercise ? day.name : "Rest Day",
     day_number: day.dayNumber,
+    day_type: day.dayType,
   }));
 
   const { data: daysData, error: daysError } = await supabase
@@ -91,7 +93,7 @@ export async function createProgram(formData: FormData) {
   // Insert exercises for exercise days
   const exercisesToInsert: any[] = [];
   program?.days.forEach((day) => {
-    if (day.type === "exercise") {
+    if (day.dayType === DayTypeEnum.enum.exercise) {
       const dayId = daysData?.find((d) => d.day_number === day.dayNumber)?.id;
       if (!dayId) return;
 
@@ -171,7 +173,7 @@ export async function editProgram(formData: FormData, programId: string) {
   const daysToUpsert = program?.days.map((day) => {
     const row: any = {
       program_id: programId,
-      name: day.type === "exercise" ? day.name : "Rest Day",
+      name: day.dayType === DayTypeEnum.enum.exercise ? day.name : "Rest Day",
       day_number: day.dayNumber,
 
     };
@@ -238,7 +240,7 @@ export async function editProgram(formData: FormData, programId: string) {
 
   // Upsert program day exercises
   const exercisesToUpsert = program?.days
-    .filter((day): day is ExerciseDay => day.type === "exercise")
+    .filter((day): day is ExerciseDay => day.dayType === DayTypeEnum.enum.exercise)
     .flatMap((day) =>
       day.exercises.map((ex) => {
         const row: any = {

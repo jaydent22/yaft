@@ -5,6 +5,7 @@ import FloatingInput from "../FloatingInput";
 import ExerciseDayCard from "../exercises/ExerciseDayCard";
 import RestDayCard from "../exercises/RestDayCard";
 import AddDayButton from "./AddDayButton";
+import { DayType, DayTypeEnum } from "../../lib/enums";
 import { createProgram, editProgram } from "./actions";
 
 export type Exercise = {
@@ -24,14 +25,14 @@ type BaseDay = {
 
 export type ExerciseDay = BaseDay & {
   id?: string; // DB id
-  type: "exercise";
+  dayType: "exercise";
   name?: string;
   exercises: Exercise[];
 };
 
 export type RestDay = BaseDay & {
   id?: string; // DB id
-  type: "rest";
+  dayType: "rest";
 };
 
 type ProgramDay = ExerciseDay | RestDay;
@@ -58,20 +59,20 @@ const ProgramEditor = ({
   );
   const [saving, setSaving] = useState(false);
 
-  function addDay(type: "exercise" | "rest", index: number) {
+  function addDay(type: DayType, index: number) {
     setProgram((prevProgram) => {
       const newDay: ProgramDay =
         type === "exercise"
           ? {
               clientId: crypto.randomUUID(),
-              type: "exercise",
+              dayType: "exercise",
               name: undefined,
               dayNumber: 0,
               exercises: [],
             }
           : {
               clientId: crypto.randomUUID(),
-              type: "rest",
+              dayType: "rest",
               dayNumber: 0,
             };
 
@@ -158,11 +159,11 @@ const ProgramEditor = ({
             <AddDayButton index={0} onAddDay={addDay} />
 
             {program.days.map((day, index) => {
-              if (day.type === "exercise") {
+              if (day.dayType === DayTypeEnum.enum.exercise) {
                 const defaultName = `Exercise Day ${
                   program.days
                     .slice(0, index)
-                    .filter((d) => d.type === "exercise").length + 1
+                    .filter((d) => d.dayType === DayTypeEnum.enum.exercise).length + 1
                 }`;
 
                 return (

@@ -10,18 +10,18 @@ function normalizeProgram(
     name: program.name,
     description: program.description,
     days: programDays.map((day) => {
-      if (day.type === "rest") {
+      if (day.day_type === "rest") {
         return {
           clientId: crypto.randomUUID(),
           id: day.id,
-          type: "rest",
+          dayType: "rest",
           dayNumber: day.day_number,
         };
       } else {
         return {
           clientId: crypto.randomUUID(),
           id: day.id,
-          type: "exercise",
+          dayType: "exercise",
           name: day.name,
           dayNumber: day.day_number,
           exercises: programDayExercises
@@ -57,6 +57,7 @@ export async function getProgramDraft(programId: string, userId: string) {
     .eq("program_id", programId)
     .order("day_number", { ascending: true });
 
+  console.log("programDays", programDays);
   const programDayIds = programDays?.map((day) => day.id) || [];
 
   const { data: programExercises } = await supabase
@@ -64,6 +65,6 @@ export async function getProgramDraft(programId: string, userId: string) {
     .select("*, exercises (id, name)")
     .in("program_day_id", programDayIds)
     .order("sort_order", { ascending: true });
-    
+
   return normalizeProgram(program, programDays || [], programExercises || []);
 }
