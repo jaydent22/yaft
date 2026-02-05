@@ -1,6 +1,6 @@
 import Link from "next/link";
 import FloatingInput from "../../../../components/FloatingInput";
-import { signup } from "../actions";
+import { signup } from "../../../../lib/actions/auth";
 
 export default function Signup() {
   return (

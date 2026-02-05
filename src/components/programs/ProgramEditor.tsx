@@ -6,7 +6,7 @@ import ExerciseDayCard from "../exercises/ExerciseDayCard";
 import RestDayCard from "../exercises/RestDayCard";
 import AddDayButton from "./AddDayButton";
 import { DayType, DayTypeEnum } from "../../lib/enums";
-import { createProgram, editProgram } from "./actions";
+import { createProgram, editProgram } from "../../lib/actions/programs";
 
 export type Exercise = {
   clientId: string; // temp id for client-side only

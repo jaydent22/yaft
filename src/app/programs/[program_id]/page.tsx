@@ -2,7 +2,7 @@
 
 import ProgramEditor from "../../../components/programs/ProgramEditor";
 import { createClient } from "../../../lib/supabase/server";
-import { getProgramDraft } from "../../programs/actions";
+import { getProgramDraft } from "../../../lib/actions/programs";
 
 export default async function EditProgramPage({
   params,
