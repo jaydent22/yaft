@@ -12,6 +12,7 @@ export default async function Programs() {
     .from("programs")
     .select("*")
     .eq("user_id", user?.id);
+  data?.sort((a, b) => (a.created_at! > b.created_at! ? 1 : -1));
 
   return (
     <div className="text-center space-y-2 md:space-y-4">
