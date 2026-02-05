@@ -150,6 +150,7 @@ export async function editProgram(formData: FormData, programId: string) {
     .update({
       name: program?.name,
       description: program?.description,
+      last_modified: new Date(Date.now()).toISOString(),
     })
     .eq("id", programId)
     .eq("user_id", userId);
