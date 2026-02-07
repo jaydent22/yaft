@@ -14,7 +14,7 @@ const ProgramList = ({ initialPrograms }: { initialPrograms: any[] }) => {
   function sortPrograms(criteria: "created_at" | "last_modified" | "name") {
     let sorted: any[] = [];
     if (criteria === currentSort) {
-      // If already sorted by this criteria, reverse the order
+      // If already sorted by this criterion, reverse the order
       sorted = [...programs].reverse();
       setIsDescending(!isDescending);
     } else {
