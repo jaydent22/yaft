@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import AnchoredMenu from "../AnchoredMenu";
+import { deleteProgram } from "../../lib/actions/programs";
 
 const ProgramList = ({ initialPrograms }: { initialPrograms: any[] }) => {
   const [programs, setPrograms] = useState(initialPrograms);
@@ -19,8 +20,10 @@ const ProgramList = ({ initialPrograms }: { initialPrograms: any[] }) => {
     } else {
       sorted = [...programs].sort((a, b) => {
         if (criteria === "name") {
-          return b.name.localeCompare(a.name);
+          setIsDescending(false);
+          return a.name.localeCompare(b.name);
         } else {
+          setIsDescending(true);
           return (
             new Date(b[criteria]).getTime() - new Date(a[criteria]).getTime()
           );
@@ -35,6 +38,7 @@ const ProgramList = ({ initialPrograms }: { initialPrograms: any[] }) => {
     setPrograms((prevPrograms) =>
       prevPrograms.filter((program) => program.id !== programId)
     );
+    deleteProgram(programId);
   }
 
   return (
@@ -127,22 +131,70 @@ const ProgramList = ({ initialPrograms }: { initialPrograms: any[] }) => {
               </AnchoredMenu>
               <a
                 href="/programs/new"
-                className="px-4 py-2 bg-accent text-white rounded hover:bg-accent-dark"
+                className="px-2 md:px-4 space-x-2 bg-accent text-white rounded hover:bg-accent-dark flex items-center"
               >
-                Create New Program
+                <p>New</p>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="size-6"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                  />
+                </svg>
               </a>
             </div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-4"> */}
+          <div className="flex flex-wrap justify-center gap-4">
             {programs &&
               programs.map((program) => (
                 <div
                   key={program.id}
-                  className="border border-border rounded-lg p-4 hover:shadow-lg transition-shadow"
+                  className="border border-border rounded-lg p-4 hover:shadow-lg transition-shadow basis-full md:basis-[calc((100%-3rem)/5)]"
                 >
-                  <h2 className="text-2xl font-bold text-foreground mb-2">
-                    {program.name}
-                  </h2>
+                  <div className="relative flex items-center justify-center mb-2">
+                    <h2 className="text-2xl font-bold text-foreground pr-10">
+                      {program.name}
+                    </h2>
+                    <div className="absolute right-2">
+                      <AnchoredMenu button={<div>···</div>} align="right">
+                        {({ closeMenu }) => (
+                          <div className="flex flex-col p-4 space-y-2">
+                            <a
+                              href={`/programs/${program.id}/edit`}
+                              className="px-2 py-1 rounded-md text-left hover:bg-surface-hover active:bg-surface-active"
+                              onClick={closeMenu}
+                            >
+                              Edit
+                            </a>
+                            <button
+                              type="button"
+                              className="px-2 py-1 rounded-md text-left hover:bg-surface-hover active:bg-surface-active text-red-500"
+                              onClick={() => {
+                                if (
+                                  confirm(
+                                    "Are you sure you want to delete this program? This action cannot be undone."
+                                  )
+                                ) {
+                                  handleProgramDelete(program.id);
+                                  closeMenu();
+                                }
+                              }}
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        )}
+                      </AnchoredMenu>
+                    </div>
+                  </div>
                   {program.description.length > 0 ? (
                     <p className="text-foreground mb-4">
                       {program.description}

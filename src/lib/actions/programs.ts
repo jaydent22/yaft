@@ -388,7 +388,4 @@ export async function deleteProgram(programId: string) {
   if (error) {
     throw error;
   }
-
-  revalidatePath("/programs");
-  redirect("/programs");
 }
