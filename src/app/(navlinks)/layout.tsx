@@ -1,19 +1,8 @@
-import { redirect } from "next/navigation";
-import { createClient } from "../../lib/supabase/server";
-
 export default async function Layout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const supabase = await createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) {
-    redirect("/auth/login");
-  }
 
   return <div className="flex flex-col flex-1 min-h-0">{children}</div>;
 }
