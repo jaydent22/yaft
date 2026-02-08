@@ -157,7 +157,7 @@ const ProgramList = ({ initialPrograms }: { initialPrograms: any[] }) => {
               programs.map((program) => (
                 <div
                   key={program.id}
-                  className="border border-border rounded-lg p-4 hover:shadow-lg transition-shadow basis-full md:basis-[calc((100%-3rem)/5)]"
+                  className="border border-border rounded-lg p-4 hover:shadow-lg transition-shadow basis-full md:basis-[calc((100%-3rem)/3)]"
                 >
                   <div className="relative flex items-center justify-center mb-2">
                     <h2 className="text-2xl font-bold text-foreground pr-10">
@@ -195,25 +195,22 @@ const ProgramList = ({ initialPrograms }: { initialPrograms: any[] }) => {
                       </AnchoredMenu>
                     </div>
                   </div>
-                  {program.description.length > 0 ? (
-                    <p className="text-foreground mb-4">
-                      {program.description}
-                    </p>
-                  ) : (
-                    <p className="text-foreground mb-4 italic">
-                      No description provided.
-                    </p>
-                  )}
+                  <div className="text-foreground mb-2 md:mb-4">
+                    {program.description.length > 0 ? (
+                      <p>{program.description}</p>
+                    ) : (
+                      <p className="italic">No description provided.</p>
+                    )}
+                  </div>
                   {/* <p className="text-foreground font-medium">
                 {formatDays(program.program_days)}
               </p> */}
                   <a
                     href={`/programs/${program.id}`}
-                    className="mt-6 inline-block px-4 py-2 bg-accent text-white rounded hover:bg-accent-dark"
+                    className="mt-4 md:mt-6 inline-block px-4 py-2 bg-accent text-white rounded hover:bg-accent-dark"
                   >
                     View Program
                   </a>
-                  {/* <div className="flex items-center justify-between mx-2 mt-2"> */}
                   <div className="w-full text-left space-y-1 pt-2">
                     <p className="text-xs italic text-foreground-muted">
                       Created: {new Date(program.created_at).toLocaleString()}
