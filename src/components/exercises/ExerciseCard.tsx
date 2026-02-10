@@ -1,4 +1,4 @@
-import type { ExerciseSearchResult } from "./ExerciseSearch";
+import type { ExerciseSearchResult } from "./ExerciseSearch/ExerciseSearch";
 
 const ExerciseCard = ({
   exercise,

@@ -3,8 +3,8 @@ import { useState } from "react";
 import Modal from "../Modal";
 import FloatingInput from "../FloatingInput";
 import type { Exercise, ExerciseDay } from "../programs/ProgramEditor";
-import type { ExerciseSearchResult } from "./ExerciseSearch";
-import ExerciseSearch from "./ExerciseSearch";
+import type { ExerciseSearchResult } from "./ExerciseSearch/ExerciseSearch";
+import ExerciseSearch from "./ExerciseSearch/ExerciseSearch";
 
 const ExerciseDayModal = ({
   day,

@@ -1,8 +1,8 @@
 "use client";
 import { useState } from "react";
-import type { Exercise } from "../programs/ProgramEditor";
-import { searchExercises } from "../../lib/actions/exercises";
-import ExerciseCard from "./ExerciseCard";
+import type { Exercise } from "../../programs/ProgramEditor";
+import { searchExercises } from "../../../lib/actions/exercises";
+import ExerciseCard from "../ExerciseCard";
 
 export type ExerciseSearchResult = {
   id: string;
