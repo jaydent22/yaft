@@ -3,17 +3,24 @@
 import { useState } from "react";
 import type { ExerciseDay } from "../programs/ProgramEditor";
 import ExerciseDayModal from "./ExerciseDayModal";
+import type { Tables } from "../../types/database";
+import type { MuscleGroupWithMuscles } from "../../lib/actions/filters";
 
 const ExerciseDayCard = ({
   day,
   onUpdate,
   onDelete,
+  muscleGroups,
+  equipment,
 }: {
   day: ExerciseDay;
   onUpdate: (updatedDay: ExerciseDay) => void;
   onDelete: () => void;
+  muscleGroups: MuscleGroupWithMuscles[];
+  equipment: Tables<"equipment">[];
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  console.log("PARENT muscleGroups:", muscleGroups);
   return (
     <div
       role="button"
@@ -66,6 +73,8 @@ const ExerciseDayCard = ({
           onUpdate(updatedDay);
           setIsModalOpen(false);
         }}
+        muscleGroups={muscleGroups}
+        equipment={equipment}
       />
     </div>
   );

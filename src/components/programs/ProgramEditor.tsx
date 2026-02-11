@@ -7,6 +7,8 @@ import RestDayCard from "../exercises/RestDayCard";
 import AddDayButton from "./AddDayButton";
 import { DayType, DayTypeEnum } from "../../lib/enums";
 import { createProgram, editProgram } from "../../lib/actions/programs";
+import type { Tables } from "../../types/database";
+import type { MuscleGroupWithMuscles } from "../../lib/actions/filters";
 
 export type Exercise = {
   clientId: string; // temp id for client-side only
@@ -44,9 +46,13 @@ export type ProgramDraft = {
 };
 
 const ProgramEditor = ({
+  muscleGroups,
+  equipment,
   programInfo,
   programId,
 }: {
+  muscleGroups: MuscleGroupWithMuscles[];
+  equipment: Tables<"equipment">[];
   programInfo?: ProgramDraft;
   programId?: string;
 }) => {
@@ -172,6 +178,8 @@ const ProgramEditor = ({
                       day={{ ...day, name: day.name ?? defaultName }}
                       onUpdate={handleDayUpdate}
                       onDelete={() => handleDayDelete(day.clientId)}
+                      muscleGroups={muscleGroups}
+                      equipment={equipment}
                     />
                     <AddDayButton index={index + 1} onAddDay={addDay} />
                   </Fragment>

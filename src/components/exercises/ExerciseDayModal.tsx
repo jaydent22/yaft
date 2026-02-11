@@ -1,22 +1,31 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import Modal from "../Modal";
 import FloatingInput from "../FloatingInput";
-import type { Exercise, ExerciseDay } from "../programs/ProgramEditor";
+import type { ExerciseDay } from "../programs/ProgramEditor";
 import type { ExerciseSearchResult } from "./ExerciseSearch/ExerciseSearch";
 import ExerciseSearch from "./ExerciseSearch/ExerciseSearch";
+import type { Tables } from "../../types/database";
+import type { MuscleGroupWithMuscles } from "../../lib/actions/filters";
 
 const ExerciseDayModal = ({
   day,
   isOpen,
   onClose,
   onSave,
+  muscleGroups,
+  equipment,
 }: {
   day: ExerciseDay;
   isOpen: boolean;
   onClose: () => void;
   onSave: (updatedDay: ExerciseDay) => void;
+  muscleGroups: MuscleGroupWithMuscles[];
+  equipment: Tables<"equipment">[];
 }) => {
+  useEffect(() => {
+    console.log("MODAL muscleGroups changed:", muscleGroups);
+  }, [muscleGroups]);
   const [dayName, setDayName] = useState(day.name ?? "");
   const [exercises, setExercises] = useState(day.exercises ?? []);
 
@@ -109,6 +118,8 @@ const ExerciseDayModal = ({
         ))}
         <ExerciseSearch
           onSelectExercise={(exercise) => handleSelectExercise(exercise)}
+          muscleGroups={muscleGroups}
+          equipment={equipment}
         />
         <button
           type="button"

@@ -3,6 +3,8 @@ import { useState } from "react";
 import FilterBottomSheet from "./FilterBottomSheet";
 import { searchExercises } from "../../../lib/actions/exercises";
 import ExerciseCard from "../ExerciseCard";
+import type { Tables } from "../../../types/database";
+import type { MuscleGroupWithMuscles } from "../../../lib/actions/filters";
 
 export type ExerciseSearchResult = {
   id: string;
@@ -14,8 +16,12 @@ export type ExerciseSearchResult = {
 
 const ExerciseSearch = ({
   onSelectExercise,
+  muscleGroups,
+  equipment,
 }: {
   onSelectExercise: (exercise: ExerciseSearchResult) => void;
+  muscleGroups: MuscleGroupWithMuscles[];
+  equipment: Tables<"equipment">[];
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [results, setResults] = useState<ExerciseSearchResult[]>([]);
@@ -44,7 +50,7 @@ const ExerciseSearch = ({
         placeholder="Search exercises..."
         className="w-full p-2 border border-gray-300 rounded-md w-full"
       />
-      <FilterBottomSheet/>
+      <FilterBottomSheet muscleGroups={muscleGroups} equipment={equipment} />
       <div className="flex flex-wrap overflow-y-auto p-2 md:p-4 mt-4 gap-2 min-h-30">
         {results.map((exercise) => (
           <div key={exercise.id} className="mr-4">

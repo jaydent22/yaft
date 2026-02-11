@@ -15,14 +15,5 @@ export default async function Programs() {
     .eq("user_id", user?.id);
   data?.sort((a, b) => (a.last_modified! > b.last_modified! ? -1 : 1));
 
-  // function formatDays(day: { name: string; day_number: number }[]) {
-  //   let days: any = [];
-  //   const sortedDay = day.sort((a, b) => a.day_number - b.day_number);
-  //   sortedDay.forEach((d) => {
-  //     d.name === "Rest Day" ? days.push("R") : days.push("E");
-  //   })
-  //   return days.join("-");
-  // }
-
   return <ProgramList initialPrograms={data || []} />;
 }

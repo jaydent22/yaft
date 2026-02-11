@@ -81,7 +81,7 @@ export type Database = {
           },
         ]
       }
-      muscles: {
+      muscle_groups: {
         Row: {
           id: string
           name: string
@@ -95,6 +95,32 @@ export type Database = {
           name?: string
         }
         Relationships: []
+      }
+      muscles: {
+        Row: {
+          id: string
+          muscle_group_id: string | null
+          name: string
+        }
+        Insert: {
+          id?: string
+          muscle_group_id?: string | null
+          name: string
+        }
+        Update: {
+          id?: string
+          muscle_group_id?: string | null
+          name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "muscles_muscle_group_id_fkey"
+            columns: ["muscle_group_id"]
+            isOneToOne: false
+            referencedRelation: "muscle_groups"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
