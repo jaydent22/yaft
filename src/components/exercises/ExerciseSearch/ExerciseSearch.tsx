@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import type { Exercise } from "../../programs/ProgramEditor";
+import FilterBottomSheet from "./FilterBottomSheet";
 import { searchExercises } from "../../../lib/actions/exercises";
 import ExerciseCard from "../ExerciseCard";
 
@@ -36,14 +36,15 @@ const ExerciseSearch = ({
   };
 
   return (
-    <div className="p-4">
+    <div className="py-2">
       <input
         type="text"
         value={searchTerm}
         onChange={(e) => handleSearch(e.target.value)}
         placeholder="Search exercises..."
-        className="w-full p-2 border border-gray-300 rounded-md"
+        className="w-full p-2 border border-gray-300 rounded-md w-full"
       />
+      <FilterBottomSheet/>
       <div className="flex flex-wrap overflow-y-auto p-2 md:p-4 mt-4 gap-2 min-h-30">
         {results.map((exercise) => (
           <div key={exercise.id} className="mr-4">

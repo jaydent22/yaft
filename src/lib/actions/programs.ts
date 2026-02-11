@@ -94,7 +94,6 @@ export async function getProgramDraft(programId: string, userId: string) {
     .eq("program_id", programId)
     .order("day_number", { ascending: true });
 
-  console.log("programDays", programDays);
   const programDayIds = programDays?.map((day) => day.id) || [];
 
   const { data: programExercises } = await supabase
@@ -102,7 +101,6 @@ export async function getProgramDraft(programId: string, userId: string) {
     .select("*, exercises (id, name)")
     .in("program_day_id", programDayIds)
     .order("sort_order", { ascending: true });
-
   return normalizeProgram(program, programDays || [], programExercises || []);
 }
 
