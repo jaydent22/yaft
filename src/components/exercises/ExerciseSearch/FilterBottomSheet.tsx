@@ -6,14 +6,27 @@ import type { MuscleGroupWithMuscles } from "../../../lib/actions/filters";
 const FilterBottomSheet = ({
   muscleGroups,
   equipment,
+  selectedMuscleId,
+  setSelectedMuscleId,
+  selectedGroupId,
+  setSelectedGroupId,
+  selectedEquipment,
+  setSelectedEquipment,
+  onApply,
+  onClear,
 }: {
   muscleGroups: MuscleGroupWithMuscles[];
   equipment: Tables<"equipment">[];
+  selectedMuscleId: string;
+  setSelectedMuscleId: (id: string) => void;
+  selectedGroupId: string;
+  setSelectedGroupId: (id: string) => void;
+  selectedEquipment: string;
+  setSelectedEquipment: (id: string) => void;
+  onApply: () => void;
+  onClear: () => void;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedMuscleId, setSelectedMuscleId] = useState("");
-  const [selectedGroupId, setSelectedGroupId] = useState("");
-  const [selectedEquipment, setSelectedEquipment] = useState("");
   const selectedGroup = muscleGroups.find(
     (group) => (group.id == selectedGroupId)
   );
@@ -105,15 +118,17 @@ const FilterBottomSheet = ({
             <button
               type="button"
               className="px-2 py-1 rounded-md bg-surface active:bg-surface-active border border-border"
-              onClick={() => setIsOpen(false)}
+              onClick={() => onClear()}
             >
-              Close
+              Clear
             </button>
-            {/* TODO - implement filter logic */}
             <button
               type="button"
               className="px-2 py-1 rounded-md bg-accent active:bg-accent-active border border-border"
-              onClick={() => alert("Apply filters")}
+              onClick={() => {
+                onApply();
+                setIsOpen(false);
+              }}
             >
               Apply
             </button>

@@ -24,15 +24,23 @@ const ExerciseSearch = ({
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [results, setResults] = useState<ExerciseSearchResult[]>([]);
+  const [selectedMuscleId, setSelectedMuscleId] = useState("");
+  const [selectedGroupId, setSelectedGroupId] = useState("");
+  const [selectedEquipment, setSelectedEquipment] = useState("");
 
-  const handleSearch = async (term: string) => {
-    setSearchTerm(term);
-    if (term.trim() === "") {
+  const runSearch = async () => {
+    if (!searchTerm.trim()) {
       setResults([]);
       return;
     }
+
     try {
-      const data = await searchExercises(term);
+      const data = await searchExercises({
+        query: searchTerm,
+        muscleId: selectedMuscleId,
+        groupId: selectedGroupId,
+        equipmentId: selectedEquipment,
+      });
       setResults(data || []);
     } catch (error) {
       console.error("Error searching exercises:", error);
@@ -40,17 +48,37 @@ const ExerciseSearch = ({
     }
   };
 
+  const clearFilters = () => {
+    setSelectedMuscleId("");
+    setSelectedGroupId("");
+    setSelectedEquipment("");
+  }
+
   return (
     <div className="py-2">
-      <div className="sticky top-0 z-10 bg-background p-2">
+      <div className="sticky top-0 z-10 bg-background p-2 space-y-1">
         <input
           type="text"
           value={searchTerm}
-          onChange={(e) => handleSearch(e.target.value)}
+          onChange={(e) => {
+            setSearchTerm(e.target.value);
+            runSearch();
+          }}
           placeholder="Search exercises..."
           className="w-full p-2 border border-gray-300 rounded-md w-full"
         />
-        <FilterBottomSheet muscleGroups={muscleGroups} equipment={equipment} />
+        <FilterBottomSheet
+          muscleGroups={muscleGroups}
+          equipment={equipment}
+          selectedMuscleId={selectedMuscleId}
+          setSelectedMuscleId={setSelectedMuscleId}
+          selectedGroupId={selectedGroupId}
+          setSelectedGroupId={setSelectedGroupId}
+          selectedEquipment={selectedEquipment}
+          setSelectedEquipment={setSelectedEquipment}
+          onApply={runSearch}
+          onClear={clearFilters}
+        />
       </div>
       <div
         className={`flex flex-wrap py-2 md:p-4 mt-4 gap-2 ${className ?? ""}`}
