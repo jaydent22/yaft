@@ -20,6 +20,10 @@ export async function searchExercises({
 
   const userId = user?.id;
 
+  if (!query.trim() && !muscleId && !groupId && !equipmentId) {
+    return [];
+  }
+
   let request = supabase.from("exercise_search_view").select("*");
 
   if (query.trim()) {
