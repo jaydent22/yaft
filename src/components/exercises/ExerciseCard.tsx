@@ -8,8 +8,8 @@ const ExerciseCard = ({
   onClick: () => void;
 }) => {
   console.log(exercise);
-  const muscle = exercise.muscles?.name || "";
-  const equipment = exercise.equipment?.name || "";
+  const muscle = exercise.muscle_name || "";
+  const equipment = exercise.equipment_name || "";
   console.log(muscle, equipment);
   return (
     <button

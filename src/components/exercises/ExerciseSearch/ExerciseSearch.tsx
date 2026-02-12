@@ -6,10 +6,7 @@ import ExerciseCard from "../ExerciseCard";
 import type { Tables } from "../../../types/database";
 import type { MuscleGroupWithMuscles } from "../../../lib/actions/filters";
 
-export type ExerciseSearchResult = Tables<"exercises"> & {
-  muscles: Pick<Tables<"muscles">, "id" | "name">;
-  equipment: Pick<Tables<"equipment">, "id" | "name">;
-};
+export type ExerciseSearchResult = Tables<"exercise_search_view">;
 
 const ExerciseSearch = ({
   onSelectExercise,

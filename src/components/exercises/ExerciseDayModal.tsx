@@ -53,8 +53,8 @@ const ExerciseDayModal = ({
         ...prevExercises,
         {
           clientId: crypto.randomUUID(),
-          exerciseId: exercise.id,
-          name: exercise.name,
+          exerciseId: exercise.id!,
+          name: exercise.name!,
           sets: 3, // default sets
           reps: 10, // default reps
           sortOrder: prevExercises.length,

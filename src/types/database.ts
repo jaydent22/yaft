@@ -34,6 +34,7 @@ export type Database = {
           description: string | null
           equipment_id: string | null
           id: string
+          muscle_group_id: string | null
           muscle_id: string | null
           name: string
           owner_user_id: string | null
@@ -43,6 +44,7 @@ export type Database = {
           description?: string | null
           equipment_id?: string | null
           id?: string
+          muscle_group_id?: string | null
           muscle_id?: string | null
           name: string
           owner_user_id?: string | null
@@ -52,6 +54,7 @@ export type Database = {
           description?: string | null
           equipment_id?: string | null
           id?: string
+          muscle_group_id?: string | null
           muscle_id?: string | null
           name?: string
           owner_user_id?: string | null
@@ -63,6 +66,13 @@ export type Database = {
             columns: ["equipment_id"]
             isOneToOne: false
             referencedRelation: "equipment"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exercises_muscle_group_id_fkey"
+            columns: ["muscle_group_id"]
+            isOneToOne: false
+            referencedRelation: "muscle_groups"
             referencedColumns: ["id"]
           },
           {
@@ -191,6 +201,13 @@ export type Database = {
             foreignKeyName: "program_day_exercises_exercise_id_fkey"
             columns: ["exercise_id"]
             isOneToOne: false
+            referencedRelation: "exercise_search_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "program_day_exercises_exercise_id_fkey"
+            columns: ["exercise_id"]
+            isOneToOne: false
             referencedRelation: "exercises"
             referencedColumns: ["id"]
           },
@@ -294,6 +311,13 @@ export type Database = {
             foreignKeyName: "workout_exercises_exercise_id_fkey"
             columns: ["exercise_id"]
             isOneToOne: false
+            referencedRelation: "exercise_search_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workout_exercises_exercise_id_fkey"
+            columns: ["exercise_id"]
+            isOneToOne: false
             referencedRelation: "exercises"
             referencedColumns: ["id"]
           },
@@ -389,7 +413,51 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      exercise_search_view: {
+        Row: {
+          description: string | null
+          equipment_id: string | null
+          equipment_name: string | null
+          id: string | null
+          muscle_group_id: string | null
+          muscle_group_name: string | null
+          muscle_id: string | null
+          muscle_name: string | null
+          name: string | null
+          owner_user_id: string | null
+          search_name: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exercises_equipment_id_fkey"
+            columns: ["equipment_id"]
+            isOneToOne: false
+            referencedRelation: "equipment"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exercises_muscle_group_id_fkey"
+            columns: ["muscle_group_id"]
+            isOneToOne: false
+            referencedRelation: "muscle_groups"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exercises_muscle_id_fkey"
+            columns: ["muscle_id"]
+            isOneToOne: false
+            referencedRelation: "muscles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exercises_owner_user_id_fkey"
+            columns: ["owner_user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       [_ in never]: never
