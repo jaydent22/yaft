@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 import Modal from "../Modal";
 import FloatingInput from "../FloatingInput";
@@ -23,9 +23,6 @@ const ExerciseDayModal = ({
   muscleGroups: MuscleGroupWithMuscles[];
   equipment: Tables<"equipment">[];
 }) => {
-  useEffect(() => {
-    console.log("MODAL muscleGroups changed:", muscleGroups);
-  }, [muscleGroups]);
   const [dayName, setDayName] = useState(day.name ?? "");
   const [exercises, setExercises] = useState(day.exercises ?? []);
 
@@ -68,7 +65,7 @@ const ExerciseDayModal = ({
 
   return (
     <Modal isOpen={isOpen} onClose={resetAndClose}>
-      <div>
+      <div className="flex flex-col h-full min-h-0">
         <FloatingInput
           id="exercise-day-name"
           label="Exercise Day Name"
@@ -77,57 +74,63 @@ const ExerciseDayModal = ({
           onChange={(e) => setDayName(e.target.value)}
           required
         />
-        {exercises.map((exercise, index) => (
-          <div
-            key={exercise.exerciseId}
-            className="mt-4 items-center gap-3 text-sm md:text-base"
+
+        <div className="flex-1 min-h-0 overflow-y-auto mt-4 space-y-4 pr-1">
+          {exercises.map((exercise, index) => (
+            <div
+              key={exercise.exerciseId}
+              className="flex items-center gap-3 text-sm md:text-base"
+            >
+              <span className="flex-1 text-foreground">{exercise.name}: </span>
+              <input
+                type="number"
+                min={1}
+                className="w-16 px-2 py-1 border border-border rounded-md text-foreground focus:outline-none focus:border-accent"
+                value={exercise.sets}
+                onChange={(e) =>
+                  setExercises((prevExercises) =>
+                    prevExercises.map((ex, i) =>
+                      i === index
+                        ? { ...ex, sets: parseInt(e.target.value, 10) }
+                        : ex
+                    )
+                  )
+                }
+              />
+              <span className="flex-1 text-foreground"> &times; </span>
+              <input
+                type="number"
+                min={1}
+                className="w-16 px-2 py-1 border border-border rounded-md text-foreground focus:outline-none focus:border-accent"
+                value={exercise.reps}
+                onChange={(e) =>
+                  setExercises((prevExercises) =>
+                    prevExercises.map((ex) =>
+                      ex.exerciseId === exercise.exerciseId
+                        ? { ...ex, reps: parseInt(e.target.value, 10) }
+                        : ex
+                    )
+                  )
+                }
+              />
+            </div>
+          ))}
+            <ExerciseSearch
+              onSelectExercise={(exercise) => handleSelectExercise(exercise)}
+              muscleGroups={muscleGroups}
+              equipment={equipment}
+            />
+        </div>
+
+        <div className="sticky bottom-0 bg-background pt-3 mt-4 border-t border-border">
+          <button
+            type="button"
+            className="w-full px-4 py-2 bg-accent text-white rounded-md hover:bg-accent-hover active:bg-accent-active"
+            onClick={handleSave}
           >
-            <span className="flex-1 text-foreground">{exercise.name}: </span>
-            <input
-              type="number"
-              min={1}
-              className="w-16 px-2 py-1 border border-border rounded-md text-foreground focus:outline-none focus:border-accent"
-              value={exercise.sets}
-              onChange={(e) =>
-                setExercises((prevExercises) =>
-                  prevExercises.map((ex, i) =>
-                    i === index
-                      ? { ...ex, sets: parseInt(e.target.value, 10) }
-                      : ex
-                  )
-                )
-              }
-            />
-            <span className="flex-1 text-foreground"> &times; </span>
-            <input
-              type="number"
-              min={1}
-              className="w-16 px-2 py-1 border border-border rounded-md text-foreground focus:outline-none focus:border-accent"
-              value={exercise.reps}
-              onChange={(e) =>
-                setExercises((prevExercises) =>
-                  prevExercises.map((ex) =>
-                    ex.exerciseId === exercise.exerciseId
-                      ? { ...ex, reps: parseInt(e.target.value, 10) }
-                      : ex
-                  )
-                )
-              }
-            />
-          </div>
-        ))}
-        <ExerciseSearch
-          onSelectExercise={(exercise) => handleSelectExercise(exercise)}
-          muscleGroups={muscleGroups}
-          equipment={equipment}
-        />
-        <button
-          type="button"
-          className="mt-4 px-4 py-2 bg-accent text-white rounded-md hover:bg-accent-hover active:bg-accent-active"
-          onClick={handleSave}
-        >
-          Save
-        </button>
+            Save
+          </button>
+        </div>
       </div>
     </Modal>
   );

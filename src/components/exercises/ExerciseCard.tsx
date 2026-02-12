@@ -7,13 +7,18 @@ const ExerciseCard = ({
   exercise: ExerciseSearchResult;
   onClick: () => void;
 }) => {
+  console.log(exercise);
+  const muscle = exercise.muscles?.name || "";
+  const equipment = exercise.equipment?.name || "";
+  console.log(muscle, equipment);
   return (
     <button
       type="button"
       onClick={onClick}
       className="p-2 border border-border rounded-md bg-surface hover:bg-surface-hover active:bg-surface-active text-left"
     >
-      <p className="text-xs">{exercise.name}</p>
+      <p className="text-sm text-foreground">{exercise.name}</p>
+      <p className="text-xs italic text-foreground-muted">{muscle} · {equipment}</p>
     </button>
   );
 };

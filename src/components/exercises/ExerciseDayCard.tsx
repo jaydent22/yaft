@@ -20,7 +20,6 @@ const ExerciseDayCard = ({
   equipment: Tables<"equipment">[];
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  console.log("PARENT muscleGroups:", muscleGroups);
   return (
     <div
       role="button"

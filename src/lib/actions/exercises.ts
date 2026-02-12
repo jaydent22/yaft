@@ -12,14 +12,13 @@ export async function searchExercises(query: string) {
 
   const { data, error } = await supabase
     .from("exercises")
-    .select("*")
+    .select("*, muscles(id, name), equipment(id, name)")
     .or(
       userId
         ? `owner_user_id.is.null,owner_user_id.eq.${userId}`
         : `owner_user_id.is.null`
     )
-    .ilike("name", `%${query}%`)
-    .limit(5);
+    .ilike("name", `%${query}%`);
 
   if (error) {
     throw new Error(`Error searching exercises: ${error.message}`);
