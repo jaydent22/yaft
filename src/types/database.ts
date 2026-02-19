@@ -337,6 +337,8 @@ export type Database = {
           notes: string | null
           program_day_id: string | null
           program_id: string | null
+          started_at: string | null
+          status: Database["public"]["Enums"]["workout_session_status"]
           user_id: string | null
         }
         Insert: {
@@ -345,6 +347,8 @@ export type Database = {
           notes?: string | null
           program_day_id?: string | null
           program_id?: string | null
+          started_at?: string | null
+          status?: Database["public"]["Enums"]["workout_session_status"]
           user_id?: string | null
         }
         Update: {
@@ -353,6 +357,8 @@ export type Database = {
           notes?: string | null
           program_day_id?: string | null
           program_id?: string | null
+          started_at?: string | null
+          status?: Database["public"]["Enums"]["workout_session_status"]
           user_id?: string | null
         }
         Relationships: [
@@ -382,21 +388,21 @@ export type Database = {
       workout_sets: {
         Row: {
           id: string
-          reps: number[] | null
+          reps: number | null
           set_number: number
           weight_kg: number | null
           workout_exercise_id: string | null
         }
         Insert: {
           id?: string
-          reps?: number[] | null
+          reps?: number | null
           set_number: number
           weight_kg?: number | null
           workout_exercise_id?: string | null
         }
         Update: {
           id?: string
-          reps?: number[] | null
+          reps?: number | null
           set_number?: number
           weight_kg?: number | null
           workout_exercise_id?: string | null
@@ -464,6 +470,7 @@ export type Database = {
     }
     Enums: {
       day_type: "exercise" | "rest"
+      workout_session_status: "draft" | "active" | "completed"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -592,6 +599,7 @@ export const Constants = {
   public: {
     Enums: {
       day_type: ["exercise", "rest"],
+      workout_session_status: ["draft", "active", "completed"],
     },
   },
 } as const

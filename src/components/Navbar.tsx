@@ -63,7 +63,7 @@ const Navbar = ({ user, profile }: NavbarProps) => {
                   {[
                     { href: "/dashboard", label: "Dashboard" },
                     { href: "/programs", label: "Programs" },
-                    { href: "/workouts", label: "Workouts" },
+                    { href: "/workout", label: "Workout" },
                     { href: "/progress", label: "Progress" },
                   ].map((item) => (
                     <Link
@@ -97,7 +97,7 @@ const Navbar = ({ user, profile }: NavbarProps) => {
                   {[
                     { href: "/dashboard", label: "Dashboard" },
                     { href: "/programs", label: "Programs" },
-                    { href: "/workouts", label: "Workouts" },
+                    { href: "/workout", label: "Workout" },
                     { href: "/progress", label: "Progress" },
                   ].map((item) => (
                     <Link
