@@ -3,49 +3,56 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import type { ExerciseDay } from "../../components/programs/ProgramEditor";
+import type {
+  ExerciseDay,
+  ProgramDraft,
+} from "../../components/programs/ProgramEditor";
+import type { Tables } from "../../types/database";
 import { DayTypeEnum } from "../enums";
-import type { ProgramDraft } from "../../components/programs/ProgramEditor";
-
 import { createClient } from "../supabase/server";
 
+type ProgramDayQueryResult = Tables<"program_days"> & {
+  program_day_exercises: (Tables<"program_day_exercises"> & {
+    exercises: Pick<Tables<"exercises">, "id" | "name">;
+  })[];
+};
+
 const ProgramSchema = z.object({
-    name: z.string().min(1, "Program name is required"),
-    description: z.string().optional(),
-    days: z.array(
-      z.discriminatedUnion("dayType", [
-        z.object({
-          id: z.string().optional(),
-          dayType: z.literal("rest"),
-          dayNumber: z.number(),
-        }),
-        z.object({
-          id: z.string().optional(),
-          dayType: z.literal("exercise"),
-          name: z.string().optional(),
-          dayNumber: z.number(),
-          exercises: z.array(
-            z.object({
-              id: z.string().optional(),
-              exerciseId: z.string(),
-              sets: z.number().min(1),
-              reps: z.number().min(1),
-              sortOrder: z.number(),
-            })
-          ),
-        }),
-      ])
-    ),
-  });
-  
+  name: z.string().min(1, "Program name is required"),
+  description: z.string().optional(),
+  days: z.array(
+    z.discriminatedUnion("dayType", [
+      z.object({
+        id: z.string().optional(),
+        dayType: z.literal("rest"),
+        dayNumber: z.number(),
+      }),
+      z.object({
+        id: z.string().optional(),
+        dayType: z.literal("exercise"),
+        name: z.string().optional(),
+        dayNumber: z.number(),
+        exercises: z.array(
+          z.object({
+            id: z.string().optional(),
+            exerciseId: z.string(),
+            sets: z.number().min(1),
+            reps: z.number().min(1),
+            sortOrder: z.number(),
+          })
+        ),
+      }),
+    ])
+  ),
+});
+
 function normalizeProgram(
-  program: any,
-  programDays: any[],
-  programDayExercises: any[]
+  program: Tables<"programs">,
+  programDays: ProgramDayQueryResult[],
 ): ProgramDraft {
   return {
     name: program.name,
-    description: program.description,
+    description: program.description?.toString() || "",
     days: programDays.map((day) => {
       if (day.day_type === "rest") {
         return {
@@ -61,7 +68,7 @@ function normalizeProgram(
           dayType: "exercise",
           name: day.name,
           dayNumber: day.day_number,
-          exercises: programDayExercises
+          exercises: day.program_day_exercises
             .filter((ex) => ex.program_day_id === day.id)
             .map((ex) => ({
               clientId: crypto.randomUUID(),
@@ -90,18 +97,15 @@ export async function getProgramDraft(programId: string, userId: string) {
 
   const { data: programDays } = await supabase
     .from("program_days")
-    .select("*")
+    .select(
+      `*, program_day_exercises(
+          *, exercises (id, name)
+    )`
+    )
     .eq("program_id", programId)
-    .order("day_number", { ascending: true });
-
-  const programDayIds = programDays?.map((day) => day.id) || [];
-
-  const { data: programExercises } = await supabase
-    .from("program_day_exercises")
-    .select("*, exercises (id, name)")
-    .in("program_day_id", programDayIds)
-    .order("sort_order", { ascending: true });
-  return normalizeProgram(program, programDays || [], programExercises || []);
+    .order("day_number", { ascending: true })
+    .order("sort_order", { referencedTable: "program_day_exercises", ascending: true });
+  return normalizeProgram(program, programDays || []);
 }
 
 export async function createProgram(formData: FormData) {
@@ -255,7 +259,7 @@ export async function editProgram(formData: FormData, programId: string) {
   const daysToInsert = daysToUpsert.filter((day) => !day.id);
   const daysToUpdate = daysToUpsert.filter((day) => day.id);
 
-  let insertedDays: { id: string, day_number: number }[] = [];
+  let insertedDays: { id: string; day_number: number }[] = [];
   if (daysToInsert.length > 0) {
     const { data, error: insertDaysError } = await supabase
       .from("program_days")
@@ -267,11 +271,11 @@ export async function editProgram(formData: FormData, programId: string) {
     insertedDays = data;
   }
 
-  let updatedDays: { id: string, day_number: number }[] = [];
+  let updatedDays: { id: string; day_number: number }[] = [];
   if (daysToUpdate.length > 0) {
     const { data, error: updateDaysError } = await supabase
       .from("program_days")
-      .upsert(daysToUpdate, { onConflict: "id"})
+      .upsert(daysToUpdate, { onConflict: "id" })
       .select("id, day_number");
     if (updateDaysError) {
       throw updateDaysError;
@@ -308,7 +312,9 @@ export async function editProgram(formData: FormData, programId: string) {
 
   // Upsert program day exercises
   const exercisesToUpsert = program?.days
-    .filter((day): day is ExerciseDay => day.dayType === DayTypeEnum.enum.exercise)
+    .filter(
+      (day): day is ExerciseDay => day.dayType === DayTypeEnum.enum.exercise
+    )
     .flatMap((day) =>
       day.exercises.map((ex) => {
         const row: any = {
@@ -325,27 +331,27 @@ export async function editProgram(formData: FormData, programId: string) {
       })
     );
 
-    // split insert and update to avoid conflict issues
-    const exercisesToInsert = exercisesToUpsert.filter((ex) => !ex.id);
-    const exercisesToUpdate = exercisesToUpsert.filter((ex) => ex.id);
+  // split insert and update to avoid conflict issues
+  const exercisesToInsert = exercisesToUpsert.filter((ex) => !ex.id);
+  const exercisesToUpdate = exercisesToUpsert.filter((ex) => ex.id);
 
-    if (exercisesToInsert.length > 0) {
-      const { error: insertError } = await supabase
-        .from("program_day_exercises")
-        .insert(exercisesToInsert);
-      if (insertError) {
-        throw insertError;
-      }
+  if (exercisesToInsert.length > 0) {
+    const { error: insertError } = await supabase
+      .from("program_day_exercises")
+      .insert(exercisesToInsert);
+    if (insertError) {
+      throw insertError;
     }
+  }
 
-    if (exercisesToUpdate.length > 0) {
-      const { error: updateError } = await supabase
-        .from("program_day_exercises")
-        .upsert(exercisesToUpdate, { onConflict: "id" });
-      if (updateError) {
-        throw updateError;
-      }
+  if (exercisesToUpdate.length > 0) {
+    const { error: updateError } = await supabase
+      .from("program_day_exercises")
+      .upsert(exercisesToUpdate, { onConflict: "id" });
+    if (updateError) {
+      throw updateError;
     }
+  }
 
   // Delete exercises (if necessary)
   const incomingExerciseIds = new Set(

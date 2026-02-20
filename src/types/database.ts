@@ -173,28 +173,28 @@ export type Database = {
       }
       program_day_exercises: {
         Row: {
-          exercise_id: string | null
+          exercise_id: string
           id: string
-          program_day_id: string | null
-          sort_order: number | null
-          target_reps: number | null
-          target_sets: number | null
+          program_day_id: string
+          sort_order: number
+          target_reps: number
+          target_sets: number
         }
         Insert: {
-          exercise_id?: string | null
+          exercise_id: string
           id?: string
-          program_day_id?: string | null
-          sort_order?: number | null
-          target_reps?: number | null
-          target_sets?: number | null
+          program_day_id: string
+          sort_order: number
+          target_reps: number
+          target_sets: number
         }
         Update: {
-          exercise_id?: string | null
+          exercise_id?: string
           id?: string
-          program_day_id?: string | null
-          sort_order?: number | null
-          target_reps?: number | null
-          target_sets?: number | null
+          program_day_id?: string
+          sort_order?: number
+          target_reps?: number
+          target_sets?: number
         }
         Relationships: [
           {
@@ -226,21 +226,21 @@ export type Database = {
           day_type: Database["public"]["Enums"]["day_type"]
           id: string
           name: string
-          program_id: string | null
+          program_id: string
         }
         Insert: {
           day_number: number
           day_type?: Database["public"]["Enums"]["day_type"]
           id?: string
           name: string
-          program_id?: string | null
+          program_id: string
         }
         Update: {
           day_number?: number
           day_type?: Database["public"]["Enums"]["day_type"]
           id?: string
           name?: string
-          program_id?: string | null
+          program_id?: string
         }
         Relationships: [
           {
@@ -259,7 +259,7 @@ export type Database = {
           id: string
           last_modified: string
           name: string
-          user_id: string | null
+          user_id: string
         }
         Insert: {
           created_at?: string
@@ -267,7 +267,7 @@ export type Database = {
           id?: string
           last_modified?: string
           name: string
-          user_id?: string | null
+          user_id: string
         }
         Update: {
           created_at?: string
@@ -275,7 +275,7 @@ export type Database = {
           id?: string
           last_modified?: string
           name?: string
-          user_id?: string | null
+          user_id?: string
         }
         Relationships: [
           {
