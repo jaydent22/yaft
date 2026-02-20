@@ -5,7 +5,6 @@ import { createClient } from "../../lib/supabase/client";
 import Modal from "../Modal";
 
 import type { Tables } from "../../types/database";
-import { get } from "http";
 
 const StartWorkoutModal = ({
   isOpen,
@@ -31,6 +30,13 @@ const StartWorkoutModal = ({
     getUser();
   }, []);
 
+  useEffect(() => {
+    if (!isOpen) {
+      setStep("select");
+      setPrograms([]);
+    }
+  }, [isOpen]);
+
   const getPrograms = async () => {
     setStep("programs");
     setLoading(true);
@@ -46,7 +52,7 @@ const StartWorkoutModal = ({
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal isOpen={isOpen} onClose={onClose} scrollable>
       {step === "select" ? (
         <div className="flex w-full h-full items-center justify-center">
           <div className="bg-surface p-6 w-full max-w-md text-center border-r border-border">
@@ -93,37 +99,28 @@ const StartWorkoutModal = ({
                 {programs.length > 0 &&
                   programs.map((program) => (
                     <div
-                  key={program.id}
-                  className="border border-border rounded-lg p-2 hover:shadow-lg transition-shadow basis-full md:basis-[calc((100%-3rem)/3)]"
-                >
-                  <div className="relative flex items-center justify-center mb-2">
-                    <h2 className="text-xl font-bold text-foreground">
-                      {program.name}
-                    </h2>
-                  </div>
-                  <div className="text-foreground">
-                    {program!.description!.length > 0 ? (
-                      <p>{program.description}</p>
-                    ) : (
-                      <p className="italic">No description provided.</p>
-                    )}
-                  </div>
-                  <button
-                    role="button"
-                    className="mt-2 md:mt-4 inline-block px-4 py-2 bg-accent text-white rounded hover:bg-accent-hover active:bg-accent-active"
-                  >
-                    View Program
-                  </button>
-                  {/* <div className="w-full text-left space-y-1 pt-2">
-                    <p className="text-xs italic text-foreground-muted">
-                      Created: {new Date(program.created_at).toLocaleString()}
-                    </p>
-                    <p className="text-xs italic text-foreground-muted">
-                      Last Modified:{" "}
-                      {new Date(program.last_modified).toLocaleString()}
-                    </p>
-                  </div> */}
-                </div>
+                      key={program.id}
+                      className="border border-border rounded-lg p-2 hover:shadow-lg transition-shadow basis-full md:basis-[calc((100%-3rem)/3)]"
+                    >
+                      <div className="relative flex items-center justify-center mb-2">
+                        <h2 className="text-xl font-bold text-foreground">
+                          {program.name}
+                        </h2>
+                      </div>
+                      <div className="text-foreground">
+                        {program!.description!.length > 0 ? (
+                          <p>{program.description}</p>
+                        ) : (
+                          <p className="italic">No description provided.</p>
+                        )}
+                      </div>
+                      <button
+                        role="button"
+                        className="mt-2 md:mt-4 inline-block px-4 py-2 bg-accent text-white rounded hover:bg-accent-hover active:bg-accent-active"
+                      >
+                        Select Program
+                      </button>
+                    </div>
                   ))}
               </div>
             )}

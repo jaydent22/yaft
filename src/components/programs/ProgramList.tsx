@@ -3,8 +3,20 @@
 import { useState } from "react";
 import AnchoredMenu from "../AnchoredMenu";
 import { deleteProgram } from "../../lib/actions/programs";
+import type { Tables } from "../../types/database";
 
-const ProgramList = ({ initialPrograms }: { initialPrograms: any[] }) => {
+export type ProgramWithDays = Tables<"programs"> & {
+  program_days: Pick<
+    Tables<"program_days">,
+    "name" | "day_number" | "day_type"
+  >[];
+};
+
+const ProgramList = ({
+  initialPrograms,
+}: {
+  initialPrograms: ProgramWithDays[];
+}) => {
   const [programs, setPrograms] = useState(initialPrograms);
   const [currentSort, setCurrentSort] = useState<
     "created_at" | "last_modified" | "name"
@@ -151,13 +163,17 @@ const ProgramList = ({ initialPrograms }: { initialPrograms: any[] }) => {
               </a>
             </div>
           </div>
-          {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-4"> */}
-          <div className="flex flex-wrap justify-center gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* <div className="flex flex-wrap justify-center gap-4"> */}
             {programs &&
               programs.map((program) => (
+                // <div
+                //   key={program.id}
+                //   className="border border-border rounded-lg p-4 hover:shadow-lg transition-shadow basis-full md:basis-[calc((100%-3rem)/3)] max-w-full"
+                // >
                 <div
                   key={program.id}
-                  className="border border-border rounded-lg p-4 hover:shadow-lg transition-shadow basis-full md:basis-[calc((100%-3rem)/3)]"
+                  className="border border-border rounded-lg p-4 hover:shadow-lg transition-shadow flex flex-col justify-between max-w-full"
                 >
                   <div className="relative flex items-center justify-center mb-2">
                     <h2 className="text-2xl font-bold text-foreground pr-10">
@@ -196,21 +212,23 @@ const ProgramList = ({ initialPrograms }: { initialPrograms: any[] }) => {
                     </div>
                   </div>
                   <div className="text-foreground mb-2 md:mb-4">
-                    {program.description.length > 0 ? (
+                    {program.description!.length > 0 ? (
                       <p>{program.description}</p>
                     ) : (
                       <p className="italic">No description provided.</p>
                     )}
                   </div>
-                  {/* <p className="text-foreground font-medium">
-                {formatDays(program.program_days)}
-              </p> */}
-                  <a
-                    href={`/programs/${program.id}`}
-                    className="mt-4 md:mt-6 inline-block px-4 py-2 bg-accent text-white rounded hover:bg-accent-dark"
-                  >
-                    View Program
-                  </a>
+                  <div className="flex overflow-x-auto gap-2 mb-2 md:mb-4 py-1 max-h-20 scroll-smooth scrollbar-thin">
+                    {program.program_days.map((day, i) => (
+                      <div
+                        key={i}
+                        className="flex flex-col items-center justify-center px-2 py-1 bg-surface border border-border rounded text-xs text-foreground w-20 shrink-0"
+                      >
+                        <span>{day.day_type === "exercise" ? "💪" : "💤"}</span>
+                        <span className="truncate">{day.name}</span>
+                      </div>
+                    ))}
+                  </div>
                   <div className="w-full text-left space-y-1 pt-2">
                     <p className="text-xs italic text-foreground-muted">
                       Created: {new Date(program.created_at).toLocaleString()}
@@ -220,6 +238,12 @@ const ProgramList = ({ initialPrograms }: { initialPrograms: any[] }) => {
                       {new Date(program.last_modified).toLocaleString()}
                     </p>
                   </div>
+                  <a
+                    href={`/programs/${program.id}`}
+                    className="mt-4 md:mt-6 inline-block w-full px-4 py-2 bg-accent text-white rounded hover:bg-accent-hover active:bg-accent-active"
+                  >
+                    View Program
+                  </a>
                 </div>
               ))}
           </div>
