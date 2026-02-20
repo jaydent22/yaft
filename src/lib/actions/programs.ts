@@ -48,7 +48,7 @@ const ProgramSchema = z.object({
 
 function normalizeProgram(
   program: Tables<"programs">,
-  programDays: ProgramDayQueryResult[],
+  programDays: ProgramDayQueryResult[]
 ): ProgramDraft {
   return {
     name: program.name,
@@ -104,7 +104,10 @@ export async function getProgramDraft(programId: string, userId: string) {
     )
     .eq("program_id", programId)
     .order("day_number", { ascending: true })
-    .order("sort_order", { referencedTable: "program_day_exercises", ascending: true });
+    .order("sort_order", {
+      referencedTable: "program_day_exercises",
+      ascending: true,
+    });
   return normalizeProgram(program, programDays || []);
 }
 

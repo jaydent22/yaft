@@ -2,6 +2,7 @@
 import { useState } from "react";
 import StartWorkoutModal from "./StartWorkoutModal";
 import type { Tables } from "../../types/database";
+import type { ProgramWithDays } from "../programs/ProgramList";
 
 const WorkoutClient = ({
   existingWorkout,
@@ -9,6 +10,13 @@ const WorkoutClient = ({
   existingWorkout?: Tables<"workout_sessions"> | null;
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedProgram, setSelectedProgram] = useState<ProgramWithDays>();
+
+  const handleSelectProgram = (program: ProgramWithDays) => {
+    setSelectedProgram(program);
+    setIsModalOpen(false);
+  }
+
   return (
     <div className="flex flex-col flex-1 text-center items-center">
       <h1 className="text-4xl font-bold text-accent mb-4">Workout</h1>
@@ -16,12 +24,13 @@ const WorkoutClient = ({
         <></>
       ) : (
         <div className="flex flex-col flex-1 justify-center items-center h-full">
-            <h1 className="text-xl text-foreground font-semibold mb-6">
-                No active workout sessions
-            </h1>
-            <h1 className="text-lg text-foreground-muted italic mb-6">
-                Start a new workout session to track your progress and stay on top of your fitness goals!
-            </h1>
+          <h1 className="text-xl text-foreground font-semibold mb-6">
+            No active workout sessions
+          </h1>
+          <h1 className="text-lg text-foreground-muted italic mb-6">
+            Start a new workout session to track your progress and stay on top
+            of your fitness goals!
+          </h1>
           <button
             role="button"
             onClick={() => setIsModalOpen(true)}
@@ -32,6 +41,7 @@ const WorkoutClient = ({
           <StartWorkoutModal
             isOpen={isModalOpen}
             onClose={() => setIsModalOpen(false)}
+            onSelectProgram={handleSelectProgram}
           />
         </div>
       )}

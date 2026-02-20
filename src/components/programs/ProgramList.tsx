@@ -222,7 +222,7 @@ const ProgramList = ({
                     {program.program_days.map((day, i) => (
                       <div
                         key={i}
-                        className="flex flex-col items-center justify-center px-2 py-1 bg-surface border border-border rounded text-xs text-foreground w-20 shrink-0"
+                        className="flex flex-col items-center justify-center px-2 py-1 bg-surface border border-border rounded text-xs text-foreground w-24 shrink-0"
                       >
                         <span>{day.day_type === "exercise" ? "💪" : "💤"}</span>
                         <span className="truncate">{day.name}</span>
