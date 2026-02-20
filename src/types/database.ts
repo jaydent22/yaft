@@ -247,13 +247,6 @@ export type Database = {
             foreignKeyName: "program_days_program_id_fkey"
             columns: ["program_id"]
             isOneToOne: false
-            referencedRelation: "program_with_days_view"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "program_days_program_id_fkey"
-            columns: ["program_id"]
-            isOneToOne: false
             referencedRelation: "programs"
             referencedColumns: ["id"]
           },
@@ -380,13 +373,6 @@ export type Database = {
             foreignKeyName: "workout_sessions_program_id_fkey"
             columns: ["program_id"]
             isOneToOne: false
-            referencedRelation: "program_with_days_view"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "workout_sessions_program_id_fkey"
-            columns: ["program_id"]
-            isOneToOne: false
             referencedRelation: "programs"
             referencedColumns: ["id"]
           },
@@ -472,28 +458,6 @@ export type Database = {
           {
             foreignKeyName: "exercises_owner_user_id_fkey"
             columns: ["owner_user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      program_with_days_view: {
-        Row: {
-          created_at: string | null
-          description: string | null
-          id: string | null
-          last_modified: string | null
-          name: string | null
-          program_day_name: string | null
-          program_day_number: number | null
-          program_day_type: Database["public"]["Enums"]["day_type"] | null
-          user_id: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "programs_user_id_fkey"
-            columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
