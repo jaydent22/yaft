@@ -243,7 +243,7 @@ export async function editProgram(formData: FormData, programId: string) {
       program_id: programId,
       name: day.dayType === DayTypeEnum.enum.exercise ? day.name : "Rest Day",
       day_number: day.dayNumber,
-
+      day_type: day.dayType,
     };
     if (day.id) {
       row.id = day.id;

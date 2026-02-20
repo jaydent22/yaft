@@ -12,8 +12,9 @@ export default async function Programs() {
   const { data } = await supabase
     .from("programs")
     .select("*, program_days(name, day_number, day_type)")
-    .eq("user_id", user?.id);
-  data?.sort((a, b) => (a.last_modified! > b.last_modified! ? -1 : 1));
+    .eq("user_id", user?.id)
+    .order("last_modified", { ascending: false })
+    .order("day_number", { referencedTable: "program_days", ascending: true });
   const programs: ProgramWithDays[] = data ?? []
 
   return <ProgramList initialPrograms={programs} />;
