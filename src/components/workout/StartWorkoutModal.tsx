@@ -3,7 +3,10 @@
 import { useEffect, useState } from "react";
 import { createClient } from "../../lib/supabase/client";
 import Modal from "../Modal";
-import type { ProgramWithDays } from "../programs/ProgramList";
+import type {
+  ProgramWithDays,
+  ProgramDayWithExercises,
+} from "../programs/ProgramList";
 
 const StartWorkoutModal = ({
   isOpen,
@@ -18,6 +21,7 @@ const StartWorkoutModal = ({
   const [programs, setPrograms] = useState<ProgramWithDays[]>([]);
   const [userId, setUserId] = useState<string | null>(null);
   const [step, setStep] = useState<"select" | "programs" | "days">("select");
+  const [programDays, setProgramDays] = useState<ProgramDayWithExercises[]>([]);
 
   const supabase = createClient();
 
@@ -57,21 +61,26 @@ const StartWorkoutModal = ({
     setLoading(false);
   };
 
-  const getProgramDays = async (programId: number) => {
+  const getProgramDays = async (programId: string) => {
     setStep("days");
     setLoading(true);
 
-    const { data } = await supabase.from("program_days").select(
-      `*, program_day_exercises(
-          *, exercises (id, name)
-      )`
-    )
-    .eq("program_id", programId)
-    .order("day_number", { ascending: true })
-    .order("sort_order", {
-      referencedTable: "program_day_exercises",
-      ascending: true,
-    });
+    const { data } = await supabase
+      .from("program_days")
+      .select(
+        `*, program_day_exercises(
+            *, exercises (id, name)
+        )`
+      )
+      .eq("program_id", programId)
+      .order("day_number", { ascending: true })
+      .order("sort_order", {
+        referencedTable: "program_day_exercises",
+        ascending: true,
+      });
+
+    setProgramDays(data || []);
+    setLoading(false);
   };
 
   return (
@@ -102,7 +111,7 @@ const StartWorkoutModal = ({
             </button>
           </div>
         </div>
-      ) : (
+      ) : step === "programs" ? (
         <div className="flex flex-col w-full">
           <div className="text-left mb-2">
             <button
@@ -152,10 +161,7 @@ const StartWorkoutModal = ({
                       </div>
                       <button
                         role="button"
-                        onClick={() => {
-                          onSelectProgram(program);
-                          onClose();
-                        }}
+                        onClick={() => getProgramDays(program.id)}
                         className="mt-2 md:mt-4 inline-block px-4 py-2 bg-accent text-white rounded hover:bg-accent-hover active:bg-accent-active"
                       >
                         Select Program
@@ -165,6 +171,47 @@ const StartWorkoutModal = ({
               </div>
             )}
           </div>
+        </div>
+      ) : (
+        <div>
+          <div className="text-left mb-2">
+            <button
+              role="button"
+              onClick={getPrograms}
+              className="p-1 text-foreground hover:underline"
+            >
+              ← Back
+            </button>
+          </div>
+
+          <h2 className="text-2xl font-bold pb-2 border-b border-border mb-4">Program Days</h2>
+          {loading ? (
+            <p>Loading...</p>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {programDays.map((day) => (
+                <div
+                  key={day.id}
+                  className="border border-border rounded-lg p-4 w-full max-w-sm"
+                >
+                  <h3 className="text-xl font-semibold mb-2">
+                    {day.name} {day.day_type === "exercise" ? "💪" : "💤"}
+                  </h3>
+                  {day.day_type === "exercise" && (
+                    <div className="flex flex-col gap-2 max-h-28 md:max-h-40 overflow-y-scroll">
+                      {day.program_day_exercises.map((exercise) => (
+                        <div key={exercise.id} className="my-1">
+                          <h4 className="text-lg font-medium">
+                            - {exercise.exercises.name}
+                          </h4>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
     </Modal>

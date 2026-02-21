@@ -12,6 +12,12 @@ export type ProgramWithDays = Tables<"programs"> & {
   >[];
 };
 
+export type ProgramDayWithExercises = Tables<"program_days"> & {
+  program_day_exercises: (Tables<"program_day_exercises"> & {
+    exercises: Pick<Tables<"exercises">, "id" | "name">;
+  })[];
+};
+
 const ProgramList = ({
   initialPrograms,
 }: {
@@ -164,7 +170,7 @@ const ProgramList = ({
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {/* <div className="flex flex-wrap justify-center gap-4"> */}
+            {/* <div className="flex flex-wrap justify-center gap-4"> */}
             {programs &&
               programs.map((program) => (
                 // <div

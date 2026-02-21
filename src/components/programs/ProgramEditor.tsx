@@ -125,16 +125,6 @@ const ProgramEditor = ({
     });
   }
 
-  // function getFieldError(
-  //   state: ProgramActionState,
-  //   path: string
-  // ): string | undefined {
-  //   if (!state.success && "fieldErrors" in state) {
-  //     return state.fieldErrors?.[path];
-  //   }
-  //   return undefined;
-  // }
-
   function getDayErrors(
     dayIndex: number
   ): Record<string, string> | undefined {
