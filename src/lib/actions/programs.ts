@@ -40,15 +40,17 @@ const ProgramSchema = z.object({
           dayType: z.literal("exercise"),
           name: z.string().optional(),
           dayNumber: z.number(),
-          exercises: z.array(
-            z.object({
-              id: z.string().optional(),
-              exerciseId: z.string(),
-              sets: z.number().min(1),
-              reps: z.number().min(1),
-              sortOrder: z.number(),
-            })
-          ),
+          exercises: z
+            .array(
+              z.object({
+                id: z.string().optional(),
+                exerciseId: z.string(),
+                sets: z.number().min(1),
+                reps: z.number().min(1),
+                sortOrder: z.number(),
+              })
+            )
+            .min(1, "At least one exercise is required for exercise days"),
         }),
       ])
     )
@@ -92,6 +94,32 @@ function normalizeProgram(
       }
     }),
   };
+}
+
+export async function getProgramDraft(programId: string, userId: string) {
+  const supabase = await createClient();
+
+  const { data: program } = await supabase
+    .from("programs")
+    .select("*")
+    .eq("id", programId)
+    .eq("user_id", userId)
+    .single();
+
+  const { data: programDays } = await supabase
+    .from("program_days")
+    .select(
+      `*, program_day_exercises(
+          *, exercises (id, name)
+    )`
+    )
+    .eq("program_id", programId)
+    .order("day_number", { ascending: true })
+    .order("sort_order", {
+      referencedTable: "program_day_exercises",
+      ascending: true,
+    });
+  return normalizeProgram(program, programDays || []);
 }
 
 async function insertDays(
@@ -367,52 +395,11 @@ async function updateExercises(
   return { success: true };
 }
 
-export async function getProgramDraft(programId: string, userId: string) {
-  const supabase = await createClient();
-
-  const { data: program } = await supabase
-    .from("programs")
-    .select("*")
-    .eq("id", programId)
-    .eq("user_id", userId)
-    .single();
-
-  const { data: programDays } = await supabase
-    .from("program_days")
-    .select(
-      `*, program_day_exercises(
-          *, exercises (id, name)
-    )`
-    )
-    .eq("program_id", programId)
-    .order("day_number", { ascending: true })
-    .order("sort_order", {
-      referencedTable: "program_day_exercises",
-      ascending: true,
-    });
-  return normalizeProgram(program, programDays || []);
-}
-
-export async function createProgram(formData: FormData) {
-  const supabase = await createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) {
-    throw new Error("User not authenticated");
-  }
-  const userId = user?.id;
-
-  const programJson = formData.get("program");
-  if (!programJson || typeof programJson !== "string") {
-    throw new Error("Invalid program data");
-  }
-
-  const parsedProgram = ProgramSchema.safeParse(JSON.parse(programJson));
-  const program = parsedProgram.success ? parsedProgram.data : null;
-
-  // Insert program
+export async function createProgram(
+  supabase: SupabaseClient,
+  program: z.infer<typeof ProgramSchema>,
+  userId: string
+): Promise<{ success: boolean; error?: string }> {
   const { data: programData, error: programError } = await supabase
     .from("programs")
     .insert({
@@ -424,7 +411,11 @@ export async function createProgram(formData: FormData) {
     .single();
 
   if (programError) {
-    throw programError;
+    return {
+      success: false,
+      error:
+        programError.message || "An error occurred while saving the program.",
+    };
   }
 
   const programId = programData.id;
@@ -433,45 +424,41 @@ export async function createProgram(formData: FormData) {
   const daysResult = await insertDays(supabase, program!.days, programId);
 
   if (!daysResult.success) {
-    throw new Error(daysResult.error);
+    return {
+      success: false,
+      error: daysResult.error,
+    };
   }
   const daysData = daysResult.data;
-   if (!daysData) {
-     throw new Error("Program days data is required to insert exercises");
-   }
+  if (!daysData) {
+    return {
+      success: false,
+      error: "Program days data is required to insert exercises",
+    };
+  }
 
   // Insert exercises for exercise days
-  const exercisesResult = await insertExercises(supabase, program!.days, daysData);
+  const exercisesResult = await insertExercises(
+    supabase,
+    program!.days,
+    daysData
+  );
   if (!exercisesResult.success) {
-    throw new Error(exercisesResult.error);
+    return {
+      success: false,
+      error: exercisesResult.error,
+    };
   }
 
-  revalidatePath("/programs");
-  redirect("/programs");
+  return { success: true };
 }
 
-export async function editProgram(formData: FormData, programId: string) {
-  const supabase = await createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) {
-    throw new Error("User not authenticated");
-  }
-  const userId = user?.id;
-
-  const programJson = formData.get("program");
-  if (!programJson || typeof programJson !== "string") {
-    throw new Error("Invalid program data");
-  }
-
-  const parsedProgram = ProgramSchema.safeParse(JSON.parse(programJson));
-  if (!parsedProgram.success) {
-    throw new Error("Invalid program schema");
-  }
-  const program = parsedProgram.data;
-
+export async function editProgram(
+  supabase: SupabaseClient,
+  program: z.infer<typeof ProgramSchema>,
+  programId: string,
+  userId: string
+): Promise<{ success: boolean; error?: string }> {
   const { error: programError } = await supabase
     .from("programs")
     .update({
@@ -482,13 +469,20 @@ export async function editProgram(formData: FormData, programId: string) {
     .eq("id", programId)
     .eq("user_id", userId);
   if (programError) {
-    throw programError;
+    return {
+      success: false,
+      error:
+        programError.message || "An error occurred while updating the program.",
+    };
   }
 
   // Update program days
   const updateDaysResult = await updateDays(supabase, program.days, programId);
   if (!updateDaysResult.success) {
-    throw new Error(updateDaysResult.error);
+    return {
+      success: false,
+      error: updateDaysResult.error,
+    };
   }
   const dayNumberToIdMap = updateDaysResult.data;
 
@@ -499,11 +493,13 @@ export async function editProgram(formData: FormData, programId: string) {
     dayNumberToIdMap!
   );
   if (!updateExercisesResult.success) {
-    throw new Error(updateExercisesResult.error);
+    return {
+      success: false,
+      error: updateExercisesResult.error,
+    };
   }
 
-  revalidatePath("/programs");
-  redirect("/programs");
+  return { success: true };
 }
 
 export async function deleteProgram(programId: string) {
@@ -525,4 +521,79 @@ export async function deleteProgram(programId: string) {
   if (error) {
     throw error;
   }
+}
+
+export async function saveProgram(
+  prevState: ProgramActionState,
+  formData: FormData
+): Promise<ProgramActionState> {
+  const supabase = await createClient();
+  try {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) {
+      return {
+        success: false,
+        formError: "User not authenticated",
+      };
+    }
+
+    const userId = user.id;
+    const programId = formData.get("program_id") as string | null; // null for create, program id for edit
+    const programJson = formData.get("program");
+
+    if (!programJson || typeof programJson !== "string") {
+      return {
+        success: false,
+        formError: "Invalid program data",
+      };
+    }
+
+    const parsedProgram = ProgramSchema.safeParse(JSON.parse(programJson));
+
+    if (!parsedProgram.success) {
+      const fieldErrors = parsedProgram.error.issues.reduce((acc, issue) => {
+        acc[issue.path.join(".")] = issue.message;
+        return acc;
+      }, {} as Record<string, string>);
+      return { success: false, fieldErrors };
+    }
+
+    const program = parsedProgram.data;
+
+    // Create program
+    if (!programId) {
+      const createResult = await createProgram(supabase, program, userId);
+      if (!createResult.success) {
+        return {
+          success: false,
+          formError: createResult.error,
+        };
+      }
+    }
+    // Update program
+    else {
+      const editResult = await editProgram(
+        supabase,
+        program,
+        programId,
+        userId
+      );
+      if (!editResult.success) {
+        return {
+          success: false,
+          formError: editResult.error,
+        };
+      }
+    }
+  } catch (error: any) {
+    return {
+      success: false,
+      formError: error.message || "An error occurred while saving the program.",
+    };
+  }
+
+  revalidatePath("/programs");
+  redirect("/programs");
 }

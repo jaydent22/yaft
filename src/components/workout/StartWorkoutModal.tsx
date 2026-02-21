@@ -57,6 +57,23 @@ const StartWorkoutModal = ({
     setLoading(false);
   };
 
+  const getProgramDays = async (programId: number) => {
+    setStep("days");
+    setLoading(true);
+
+    const { data } = await supabase.from("program_days").select(
+      `*, program_day_exercises(
+          *, exercises (id, name)
+      )`
+    )
+    .eq("program_id", programId)
+    .order("day_number", { ascending: true })
+    .order("sort_order", {
+      referencedTable: "program_day_exercises",
+      ascending: true,
+    });
+  };
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} scrollable>
       {step === "select" ? (

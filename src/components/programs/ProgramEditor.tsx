@@ -1,14 +1,17 @@
 "use client";
-
-import { Fragment, useState } from "react";
+import { Fragment, useState, useActionState, useMemo, useEffect } from "react";
 import FloatingInput from "../FloatingInput";
 import ExerciseDayCard from "../exercises/ExerciseDayCard";
 import RestDayCard from "../exercises/RestDayCard";
 import AddDayButton from "./AddDayButton";
 import { DayType, DayTypeEnum } from "../../lib/enums";
-import { createProgram, editProgram } from "../../lib/actions/programs";
+import {
+  saveProgram,
+  type ProgramActionState,
+} from "../../lib/actions/programs";
 import type { Tables } from "../../types/database";
 import type { MuscleGroupWithMuscles } from "../../lib/actions/filters";
+import { z } from "zod";
 
 export type Exercise = {
   clientId: string; // temp id for client-side only
@@ -63,7 +66,13 @@ const ProgramEditor = ({
       days: [],
     }
   );
-  const [saving, setSaving] = useState(false);
+  const initialState: ProgramActionState = { success: true };
+  const [state, formAction, pending] = useActionState<
+    ProgramActionState,
+    FormData
+  >(saveProgram, initialState);
+
+  const programJson = useMemo(() => JSON.stringify(program), [program]);
 
   function addDay(type: DayType, index: number) {
     setProgram((prevProgram) => {
@@ -116,29 +125,46 @@ const ProgramEditor = ({
     });
   }
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    setSaving(true);
-    e.preventDefault();
+  // function getFieldError(
+  //   state: ProgramActionState,
+  //   path: string
+  // ): string | undefined {
+  //   if (!state.success && "fieldErrors" in state) {
+  //     return state.fieldErrors?.[path];
+  //   }
+  //   return undefined;
+  // }
 
-    const formData = new FormData();
-    formData.set("program", JSON.stringify(program));
+  function getDayErrors(
+    dayIndex: number
+  ): Record<string, string> | undefined {
+    if (state.success || !state.fieldErrors) return undefined;
 
-    programInfo && programId
-      ? await editProgram(formData, programId)
-      : await createProgram(formData);
-    setSaving(false);
+    const prefix = `days.${dayIndex}`;
+    const dayErrors: Record<string, string> = {};
+
+    Object.entries(state.fieldErrors).forEach(([key, value]) => {
+      if (key.startsWith(prefix)) {
+        const trimmedKey = key.replace(`${prefix}.`, "");
+        dayErrors[trimmedKey] = value;
+      }
+    });
+
+    return Object.keys(dayErrors).length > 0 ? dayErrors : undefined;
   }
 
   return (
     <div className="flex flex-col flex-1">
-      <form className="flex flex-col flex-1" onSubmit={handleSubmit}>
+      <form className="flex flex-col flex-1" action={formAction}>
         <div className="mb-4 md:mb-8 space-y-4">
           <FloatingInput
             id="program-name"
             label="Program Name"
             variant="title"
             value={program.name ?? ""}
-            className="max-w-md"
+            className={`max-w-md ${
+              state.fieldErrors?.name ? "border-red-500" : ""
+            }`}
             onChange={(e) => setProgram({ ...program, name: e.target.value })}
             required
           />
@@ -160,7 +186,11 @@ const ProgramEditor = ({
           </div>
         </div>
 
-        <div className="flex flex-1 overflow-y-auto border border-border rounded-lg p-2 md:p-4 mb-2 md:mb-4 items-center justify-center">
+        <div
+          className={`flex flex-1 overflow-y-auto border rounded-lg p-2 md:p-4 mb-2 md:mb-4 items-center justify-center ${
+            state.fieldErrors?.["days"] ? "border-red-500" : "border-border"
+          }`}
+        >
           <div className="flex flex-wrap gap-2 md:gap-4 justify-center items-center">
             <AddDayButton index={0} onAddDay={addDay} />
 
@@ -169,8 +199,10 @@ const ProgramEditor = ({
                 const defaultName = `Exercise Day ${
                   program.days
                     .slice(0, index)
-                    .filter((d) => d.dayType === DayTypeEnum.enum.exercise).length + 1
+                    .filter((d) => d.dayType === DayTypeEnum.enum.exercise)
+                    .length + 1
                 }`;
+                const dayErrors = getDayErrors(index);
 
                 return (
                   <Fragment key={day.clientId}>
@@ -180,6 +212,7 @@ const ProgramEditor = ({
                       onDelete={() => handleDayDelete(day.clientId)}
                       muscleGroups={muscleGroups}
                       equipment={equipment}
+                      errors={dayErrors}
                     />
                     <AddDayButton index={index + 1} onAddDay={addDay} />
                   </Fragment>
@@ -197,13 +230,20 @@ const ProgramEditor = ({
             })}
           </div>
         </div>
+        {state.fieldErrors?.["days"] && (
+          <p className="text-red-500 text-sm mb-4">
+            {state.fieldErrors["days"]}
+          </p>
+        )}
         <button
           type="submit"
-          disabled={saving}
+          disabled={pending}
           className="w-full bg-accent text-white py-3 rounded-md hover:bg-accent-hover focus:outline-none active:bg-accent-active disabled:bg-accent-hover"
         >
-          {saving ? "Saving..." : "Save Program"}
+          {pending ? "Saving..." : "Save Program"}
         </button>
+        <input type="hidden" name="program" value={programJson} />
+        <input type="hidden" name="program_id" value={programId ?? ""} />
       </form>
     </div>
   );
